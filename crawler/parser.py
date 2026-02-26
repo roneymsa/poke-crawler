@@ -5,7 +5,6 @@ from typing import Optional
 from bs4 import BeautifulSoup
 
 from crawler.models import AbilityInfo, BaseStats, Pokemon
-from crawler.navigation_parser import BulbapediaNavigationParser
 
 def _safe_int(value: Optional[str]) -> Optional[int]:
     if value is None:
