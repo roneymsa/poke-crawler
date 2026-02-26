@@ -4,7 +4,9 @@ import re
 from typing import Optional
 from bs4 import BeautifulSoup
 
-from crawler.models import AbilityInfo, BaseStats, Pokemon
+from crawler.domain.models import AbilityInfo, BaseStats, Pokemon
+
+BULBAPEDIA_IMAGE_BASE = "https://bulbapedia.bulbagarden.net"
 
 def _safe_int(value: Optional[str]) -> Optional[int]:
     if value is None:
@@ -21,6 +23,45 @@ def _normalize_type(s: str) -> str:
     s = (s or "").strip()
     s = re.sub(r"\s*\([^)]*\)\s*", "", s)
     return s.strip() or ""
+
+
+def _td_is_visible(td) -> bool:
+    """True se o td não está oculto por display:none."""
+    style = (td.get("style") or "").replace(" ", "").lower()
+    return "display:none" not in style
+
+
+def _is_valid_ability_name(name: str) -> bool:
+    """Filtra rótulos que não são nomes de habilidade."""
+    return bool(name) and name.lower() not in {
+        "ability",
+        "abilities",
+        "hidden ability",
+    }
+
+
+def _full_image_url(src: str) -> str:
+    """Converte src de imagem (relativo ou absoluto) em URL absoluta."""
+    if not src:
+        return ""
+    if src.startswith("//"):
+        return "https:" + src
+    if src.startswith("http"):
+        return src
+    return BULBAPEDIA_IMAGE_BASE + src
+
+
+def _dedupe_abilities(abilities: list[AbilityInfo]) -> list[AbilityInfo]:
+    """Remove duplicatas por (name, is_hidden) mantendo a ordem."""
+    seen: set[tuple[str, bool]] = set()
+    out: list[AbilityInfo] = []
+    for a in abilities:
+        key = (a.name, a.is_hidden)
+        if key not in seen:
+            seen.add(key)
+            out.append(a)
+    return out
+
 
 STAT_MAP = {
     "hp": "hp",
@@ -77,21 +118,28 @@ class BulbapediaParser:
             class_=re.compile(r"roundy|infobox", re.I),
         )
 
+    def _dex_from_infobox_row(self, row) -> Optional[int]:
+        """Extrai o número do National Dex de uma linha (tr) da infobox, se existir."""
+        cells = row.find_all(["th", "td"])
+        for i, cell in enumerate(cells):
+            text = cell.get_text(strip=True)
+            match = re.search(r"#?\s*(\d{3,4})\s*$", text)
+            if match:
+                return _safe_int(match.group(1))
+            if (
+                "national" in text.lower()
+                and "dex" in text.lower()
+                and i + 1 < len(cells)
+            ):
+                return _safe_int(cells[i + 1].get_text(strip=True))
+        return None
+
     def _find_dex_in_infobox(self, soup: BeautifulSoup) -> Optional[int]:
         for table in self._find_infobox_tables(soup):
             for row in table.find_all("tr"):
-                cells = row.find_all(["th", "td"])
-                for i, cell in enumerate(cells):
-                    text = cell.get_text(strip=True)
-                    match = re.search(r"#?\s*(\d{3,4})\s*$", text)
-                    if match:
-                        return _safe_int(match.group(1))
-                    if (
-                        "national" in text.lower()
-                        and "dex" in text.lower()
-                        and i + 1 < len(cells)
-                    ):
-                        return _safe_int(cells[i + 1].get_text(strip=True))
+                dex = self._dex_from_infobox_row(row)
+                if dex is not None:
+                    return dex
         return None
 
     def _extract_national_dex(self, soup: BeautifulSoup) -> Optional[int]:
@@ -192,6 +240,22 @@ class BulbapediaParser:
             return None
         return h3.find_next_sibling("div")
 
+    def _evolution_table_has_stage_and_link(self, table) -> bool:
+        """True se a tabela tem stage (Unevolved/First Evolution/...) e link de Pokémon."""
+        link_re = re.compile(r"_\(Pok", re.I)
+        stage_re = re.compile(
+            r"^(Unevolved|First Evolution|Second Evolution)$", re.I
+        )
+        has_link = table.find("a", href=link_re) or table.find(
+            "a", class_=re.compile(r"selflink", re.I)
+        )
+        if not has_link:
+            return False
+        return any(
+            stage_re.match(s.get_text(strip=True))
+            for s in table.find_all("small")
+        )
+
     def _extract_evolution_chain(self, evolution_div) -> list[str]:
         """
         Extrai a linha evolutiva (nomes na ordem) a partir da div da seção Evolution.
@@ -206,22 +270,12 @@ class BulbapediaParser:
             r"^(Unevolved|First Evolution|Second Evolution)$", re.I
         )
 
-        def table_has_stage_and_link(t) -> bool:
-            has_link = t.find("a", href=link_re) or t.find(
-                "a", class_=re.compile(r"selflink", re.I)
-            )
-            if not has_link:
-                return False
-            return any(
-                stage_re.match(s.get_text(strip=True))
-                for s in t.find_all("small")
-            )
-
         for table in evolution_div.find_all("table"):
-            if not table_has_stage_and_link(table):
+            if not self._evolution_table_has_stage_and_link(table):
                 continue
             if any(
-                table_has_stage_and_link(t) for t in table.find_all("table")
+                self._evolution_table_has_stage_and_link(t)
+                for t in table.find_all("table")
             ):
                 continue
             stage_small = None
@@ -283,96 +337,72 @@ class BulbapediaParser:
         chain = self._extract_evolution_chain(div) if div else []
         return self._resolve_prev_next(chain, current_name)
 
-    def _extract_abilities(self, soup: BeautifulSoup) -> list[AbilityInfo]:
-        abilities: list[AbilityInfo] = []
-        seen: set[tuple[str, bool]] = set()
+    def _extract_abilities_from_td(self, td) -> list[AbilityInfo]:
+        """Extrai habilidades de um único <td> (pode retornar várias)."""
+        if not _td_is_visible(td):
+            return []
+        text = td.get_text(" ", strip=True)
+        if not text:
+            return []
+        hidden = "hidden ability" in text.lower()
+        result: list[AbilityInfo] = []
+        links = td.find_all("a")
+        if links:
+            for a in links:
+                name = a.get_text(strip=True)
+                if _is_valid_ability_name(name):
+                    result.append(AbilityInfo(name=name, is_hidden=hidden))
+        else:
+            for part in re.split(r"[,/]", text):
+                part = part.strip()
+                if _is_valid_ability_name(part) and "hidden" not in part.lower():
+                    result.append(AbilityInfo(name=part, is_hidden=False))
+        return result
 
-        def is_visible(td) -> bool:
-            style = (td.get("style") or "").replace(" ", "").lower()
-            return "display:none" not in style
-
-        def is_valid_name(name: str) -> bool:
-            return bool(name) and name.lower() not in {
-                "ability",
-                "abilities",
-                "hidden ability",
-            }
-
-        def add_ability(name: str, hidden: bool):
-            key = (name, hidden)
-            if key not in seen:
-                seen.add(key)
-                abilities.append(AbilityInfo(name=name, is_hidden=hidden))
-
-        def extract_from_td(td):
-            if not is_visible(td):
-                return
-
-            text = td.get_text(" ", strip=True)
-            if not text:
-                return
-
-            hidden = "hidden ability" in text.lower()
-
-            links = td.find_all("a")
-
-            if links:
-                for a in links:
-                    name = a.get_text(strip=True)
-                    if is_valid_name(name):
-                        add_ability(name, hidden)
-            else:
-                for part in re.split(r"[,/]", text):
-                    part = part.strip()
-                    if is_valid_name(part) and "hidden" not in part.lower():
-                        add_ability(part, False)
-
-        def find_by_header():
-            for table in self._find_infobox_tables(soup):
-                for row in table.find_all("tr"):
-                    th = row.find("th")
-                    if not th:
-                        continue
-                    if "ability" not in th.get_text(strip=True).lower():
-                        continue
-                    for td in row.find_all("td"):
-                        extract_from_td(td)
-                    if abilities:
-                        return
-
-        def find_by_next_table():
-            for cell in soup.find_all(["th", "td"]):
-                if "abilities" not in cell.get_text(strip=True).lower():
+    def _find_abilities_by_infobox_header(self, soup: BeautifulSoup) -> list[AbilityInfo]:
+        """Busca habilidades na infobox pela linha com header 'ability'."""
+        for table in self._find_infobox_tables(soup):
+            for row in table.find_all("tr"):
+                th = row.find("th")
+                if not th or "ability" not in th.get_text(strip=True).lower():
                     continue
-                table = cell.find_next(
-                    "table", class_=re.compile(r"roundy|infobox", re.I)
-                )
-                if not table:
-                    continue
-                for td in table.find_all("td"):
-                    extract_from_td(td)
+                abilities: list[AbilityInfo] = []
+                for td in row.find_all("td"):
+                    abilities.extend(self._extract_abilities_from_td(td))
                 if abilities:
-                    return
+                    return abilities
+        return []
 
-        strategies = [find_by_header, find_by_next_table]
-        for strategy in strategies:
-            strategy()
+    def _find_abilities_by_next_table(self, soup: BeautifulSoup) -> list[AbilityInfo]:
+        """Busca habilidades na tabela seguinte a uma célula com 'abilities'."""
+        for cell in soup.find_all(["th", "td"]):
+            if "abilities" not in cell.get_text(strip=True).lower():
+                continue
+            table = cell.find_next(
+                "table", class_=re.compile(r"roundy|infobox", re.I)
+            )
+            if not table:
+                continue
+            abilities: list[AbilityInfo] = []
+            for td in table.find_all("td"):
+                abilities.extend(self._extract_abilities_from_td(td))
             if abilities:
-                break
-        return abilities
+                return abilities
+        return []
+
+    def _extract_abilities(self, soup: BeautifulSoup) -> list[AbilityInfo]:
+        """Extrai habilidades tentando infobox por header e depois por próxima tabela."""
+        for finder in (
+            self._find_abilities_by_infobox_header,
+            self._find_abilities_by_next_table,
+        ):
+            abilities = finder(soup)
+            if abilities:
+                return _dedupe_abilities(abilities)
+        return []
 
     def _extract_image_url(self, soup: BeautifulSoup, pokemon_name: Optional[str] = None) -> Optional[str]:
         name_norm = pokemon_name.lower() if pokemon_name else None
-
-        def _full_url(src: str) -> str:
-            if not src:
-                return ""
-            if src.startswith("//"):
-                return "https:" + src
-            if src.startswith("http"):
-                return src
-            return "https://bulbapedia.bulbagarden.net" + src
-
         if not name_norm:
             return None
         for table in self._find_infobox_tables(soup):
@@ -389,5 +419,5 @@ class BulbapediaParser:
                     continue
                 if not re.search(r"(archives|bulbagarden)", src, re.I):
                     continue
-                return _full_url(src)
+                return _full_image_url(src)
         return None
