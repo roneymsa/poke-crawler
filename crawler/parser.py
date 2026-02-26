@@ -67,10 +67,10 @@ class BulbapediaParser:
 
     def _extract_name(self, soup: BeautifulSoup, page_name: Optional[str]) -> str:
         first_heading = soup.find("h1", id="firstHeading")
-        if first_heading:
-            text = first_heading.get_text(strip=True)
-            return re.sub(r"\s*\([^)]*\)\s*$", "", text).strip() or (page_name or "")
-        return page_name or ""
+        if not first_heading:
+            return ""
+        text = first_heading.get_text(strip=True)
+        return re.sub(r"\s*\([^)]*\)\s*$", "", text).strip()
 
     def _find_infobox_tables(self, soup: BeautifulSoup):
         return soup.find_all(
@@ -95,27 +95,11 @@ class BulbapediaParser:
                         return _safe_int(cells[i + 1].get_text(strip=True))
         return None
 
-    def _find_dex_fallback(self, soup: BeautifulSoup) -> Optional[int]:
-        """Fallback: procura #NNNN em qualquer th/td da página."""
-        for el in soup.find_all(["th", "td"]):
-            m = re.search(r"#\s*(\d{3,4})\b", el.get_text())
-            if m:
-                return _safe_int(m.group(1))
-        return None
-
     def _extract_national_dex(self, soup: BeautifulSoup) -> Optional[int]:
-        return (
-            self._find_dex_in_infobox(soup)
-            or self._find_dex_fallback(soup)
-        )
+        return self._find_dex_in_infobox(soup)
 
     def _extract_category(self, soup: BeautifulSoup) -> Optional[str]:
         a = soup.find("a", title="Pokémon category")
-        if not a:
-            a = soup.find(
-                "a",
-                href=re.compile(r"Pok(?:emon|émon|%C3%A9mon)_category", re.I),
-            )
         if not a:
             return None
         return a.get_text(strip=True) or None
@@ -124,15 +108,10 @@ class BulbapediaParser:
         types: list[str] = []
         type_link = soup.find("a", title="Type")
         if not type_link:
-            for a in soup.find_all("a", href=re.compile(r"wiki/Type\b", re.I)):
-                if a.get_text(strip=True) == "Type":
-                    type_link = a
-                    break
-        if not type_link:
-            return types[:2]
+            return []
         section_td = type_link.find_parent("td")
         if not section_td:
-            return types[:2]
+            return []
         style_hidden = "display:none"
         for td in section_td.find_all("td"):
             style = (td.get("style") or "").replace(" ", "").lower()
@@ -395,41 +374,21 @@ class BulbapediaParser:
                 return src
             return "https://bulbapedia.bulbagarden.net" + src
 
-        # 1) Procurar no infobox por uma imagem cujo alt/title contenha o nome do Pokémon
-        if name_norm:
-            for table in self._find_infobox_tables(soup):
-                for img in table.find_all("img"):
-                    src = img.get("src") or ""
-                    if not src:
-                        continue
-                    alt = (img.get("alt") or "").lower()
-                    title = (img.get("title") or "").lower()
-                    parent = img.find_parent("a")
-                    parent_title = (parent.get("title") or "").lower() if parent else ""
-                    text_blob = " ".join([alt, title, parent_title])
-                    if name_norm not in text_blob:
-                        continue
-                    if not re.search(r"(archives|bulbagarden)", src, re.I):
-                        continue
-                    return _full_url(src)
-
-        # 2) Fallback: primeira imagem dos arquivos, priorizando as que citam o nome
-        candidates: list[tuple[bool, str]] = []
-        for img in soup.find_all("img"):
-            src = img.get("src") or ""
-            if not re.search(r"(archives|bulbagarden)", src, re.I):
-                continue
-            alt = (img.get("alt") or "").lower()
-            title = (img.get("title") or "").lower()
-            parent = img.find_parent("a")
-            parent_title = (parent.get("title") or "").lower() if parent else ""
-            text_blob = " ".join([alt, title, parent_title])
-            has_name = bool(name_norm and name_norm in text_blob)
-            candidates.append((has_name, src))
-
-        if candidates:
-            # True (tem nome) antes de False; reverse=True coloca (True, src) primeiro
-            candidates.sort(reverse=True)
-            return _full_url(candidates[0][1])
-
+        if not name_norm:
+            return None
+        for table in self._find_infobox_tables(soup):
+            for img in table.find_all("img"):
+                src = img.get("src") or ""
+                if not src:
+                    continue
+                alt = (img.get("alt") or "").lower()
+                title = (img.get("title") or "").lower()
+                parent = img.find_parent("a")
+                parent_title = (parent.get("title") or "").lower() if parent else ""
+                text_blob = " ".join([alt, title, parent_title])
+                if name_norm not in text_blob:
+                    continue
+                if not re.search(r"(archives|bulbagarden)", src, re.I):
+                    continue
+                return _full_url(src)
         return None
