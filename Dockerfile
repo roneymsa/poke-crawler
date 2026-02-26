@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY main.py .
 COPY crawler/ ./crawler/
+COPY tests/ ./tests/
 
 ENTRYPOINT ["python", "main.py"]
 CMD ["--list", "pokemon_names.txt"]

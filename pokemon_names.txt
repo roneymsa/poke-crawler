@@ -5,3 +5,5 @@ Pikachu
 Dragonite
 pichu
 beldum
+teste
+Pidgey

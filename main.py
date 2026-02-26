@@ -12,13 +12,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from crawler.client import BulbapediaClient, FetchError
-
-logger = logging.getLogger(__name__)
+from crawler import BulbapediaClient, FetchError, Pokemon, Storage
 from crawler.parser import BulbapediaParser
 from crawler.downloader import ImageDownloader
-from crawler.storage import Storage
-from crawler.models import Pokemon
+
+logger = logging.getLogger(__name__)
 
 
 def _slug(name: str) -> str:

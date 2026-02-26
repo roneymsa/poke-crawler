@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
-from crawler.models import Pokemon
+from crawler.domain.models import Pokemon
 
 if TYPE_CHECKING:
     from crawler.client import BulbapediaClient

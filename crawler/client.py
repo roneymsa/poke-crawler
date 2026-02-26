@@ -10,24 +10,11 @@ from tenacity import (
     wait_exponential,
 )
 
+from crawler.domain.exceptions import FetchError
+
 BASE_URL = "https://bulbapedia.bulbagarden.net"
 DEFAULT_TIMEOUT = 30.0
 DEFAULT_RETRIES = 3
-
-
-class FetchError(Exception):
-    """Erro ao obter a página (rede, timeout ou HTTP 4xx/5xx)."""
-
-    def __init__(
-        self,
-        url: str,
-        message: Optional[str] = None,
-        status_code: Optional[int] = None,
-    ):
-        self.url = url
-        self.status_code = status_code
-        self.message = message or url
-        super().__init__(self.message)
 
 
 def _make_retry_decorator(max_retries: int = DEFAULT_RETRIES):

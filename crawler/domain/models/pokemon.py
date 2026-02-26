@@ -1,5 +1,9 @@
+"""Modelos de domínio: Pokémon, stats e habilidades."""
+
 from typing import Optional
+
 from pydantic import BaseModel, Field
+
 
 class BaseStats(BaseModel):
     """Atributos base (Base Stats) do Pokémon."""
@@ -17,10 +21,14 @@ class BaseStats(BaseModel):
 
 class AbilityInfo(BaseModel):
     """Uma habilidade, com flag opcional de Hidden Ability."""
+
     name: str
     is_hidden: bool = False
 
+
 class Pokemon(BaseModel):
+    """Entidade de domínio: Pokémon com dados da Bulbapedia."""
+
     name: str = ""
     national_dex_number: Optional[int] = None
     category: Optional[str] = None

@@ -1,11 +1,11 @@
-"""Armazenamento: exportação JSON e persistência em SQLite."""
+"""Serviço de domínio: armazenamento (exportação JSON e persistência em SQLite)."""
 
 import json
 import sqlite3
 from pathlib import Path
 from typing import List
 
-from crawler.models import Pokemon
+from crawler.domain.models import AbilityInfo, BaseStats, Pokemon
 
 
 class Storage:
@@ -92,8 +92,6 @@ class Storage:
 
     def load_sqlite(self) -> List[Pokemon]:
         """Carrega todos os Pokémon do SQLite."""
-        from crawler.models import AbilityInfo, BaseStats
-
         conn = sqlite3.connect(self.db_path)
         try:
             self._ensure_schema(conn)

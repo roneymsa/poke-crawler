@@ -33,17 +33,29 @@ poke-crawler/
 
 O projeto monta o diretório atual no container, então os arquivos gerados (`pokemon.json`, `pokemon.db`, `images/`) ficam na pasta do projeto.
 
+**Executar o crawler:**
+
 ```bash
 # Usar lista de nomes (crie pokemon_names.txt com um nome por linha)
 docker compose run --rm crawler
 
-# Ou passar argumentos (sobrescreve o comando padrão)
+# Passar nomes na linha de comando
 docker compose run --rm crawler Pikachu Charmander Squirtle
+
+# Lista em arquivo e mais workers
 docker compose run --rm crawler --list pokemon_names.txt --workers 5
-docker compose run --rm crawler --list pokemon_names.txt --json output/saida.json --images output/img # Para direcionar as imagens pra pasta output ao invés do padrão
+
+# JSON e imagens em pastas customizadas
+docker compose run --rm crawler --list pokemon_names.txt --json output/saida.json --images output/img
 ```
 
-Build manual da imagem (opcional):
+**Executar os testes no Docker:**
+
+```bash
+docker compose run --rm crawler python -m pytest tests/ -v
+```
+
+**Build manual da imagem (opcional):**
 
 ```bash
 docker compose build
@@ -111,7 +123,22 @@ python main.py --list lista.txt --workers 5
 python main.py --list pokemon_names.txt --json dados.json --db dados.db --images img --workers 4
 ```
 
-### 3. Saída
+### 3. Executar os testes
+
+```bash
+# Todos os testes
+python -m pytest tests/ -v
+
+# Só os testes do parser
+python -m pytest tests/test_parser.py -v
+
+# Com cobertura (opcional: pip install pytest-cov)
+python -m pytest tests/ -v --cov=crawler
+```
+
+No Windows, use `py -m pytest` se `python` não estiver no PATH.
+
+### 4. Saída
 
 - **JSON**: arquivo com array de objetos (um por Pokémon), com todos os campos e caminho da imagem.
 - **SQLite**: tabela `pokemon` com os mesmos dados; habilidades em JSON na coluna `abilities`.
