@@ -5,6 +5,7 @@ saida.json
 saida.db
 pokemon.json
 pokemon.db
+output/
 
 __pycache__/
 *.py[cod]
