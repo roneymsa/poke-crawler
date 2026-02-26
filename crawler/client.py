@@ -96,6 +96,44 @@ class BulbapediaClient:
 
         return _fetch()
 
+    async def get_bytes(
+        self, path_or_url: str, headers: Optional[dict] = None
+    ) -> tuple[bytes, str]:
+        """Baixa URL e retorna (corpo, content_type). Headers opcionais sobrescrevem os default."""
+        url = self._build_url(path_or_url)
+        request_headers = {**self._headers, **(headers or {})}
+
+        @_make_retry_decorator(self.max_retries)
+        async def _fetch() -> tuple[bytes, str]:
+            try:
+                response = await self._async_client.get(url, headers=request_headers)
+                response.raise_for_status()
+                ct = response.headers.get("content-type", "").split(";")[0].strip()
+                return (response.content, ct)
+            except httpx.HTTPError as e:
+                raise FetchError(url, str(e)) from e
+
+        return await _fetch()
+
+    def get_bytes_sync(
+        self, path_or_url: str, headers: Optional[dict] = None
+    ) -> tuple[bytes, str]:
+        """Versão síncrona de get_bytes."""
+        url = self._build_url(path_or_url)
+        request_headers = {**self._headers, **(headers or {})}
+
+        @_make_retry_decorator(self.max_retries)
+        def _fetch() -> tuple[bytes, str]:
+            try:
+                response = self._sync_client.get(url, headers=request_headers)
+                response.raise_for_status()
+                ct = response.headers.get("content-type", "").split(";")[0].strip()
+                return (response.content, ct)
+            except httpx.HTTPError as e:
+                raise FetchError(url, str(e)) from e
+
+        return _fetch()
+
     async def aclose(self) -> None:
         """Fecha os clientes HTTP (async + sync). Chame ao terminar o uso."""
         await self._async_client.aclose()
