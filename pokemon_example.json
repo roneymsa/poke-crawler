@@ -1,0 +1,208 @@
+[
+  {
+    "name": "Bulbasaur",
+    "national_dex_number": 1,
+    "category": "Seed Pokémon",
+    "types": [
+      "Grass",
+      "Poison"
+    ],
+    "base_stats": {
+      "hp": 45,
+      "attack": 49,
+      "defense": 49,
+      "sp_atk": 65,
+      "sp_def": 65,
+      "speed": 45
+    },
+    "evolution_prev": null,
+    "evolution_next": "Ivysaur",
+    "abilities": [
+      {
+        "name": "Overgrow",
+        "is_hidden": false
+      },
+      {
+        "name": "Chlorophyll",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "images\\Bulbasaur.png"
+  },
+  {
+    "name": "Charmander",
+    "national_dex_number": 4,
+    "category": "Lizard Pokémon",
+    "types": [
+      "Fire"
+    ],
+    "base_stats": {
+      "hp": 39,
+      "attack": 52,
+      "defense": 43,
+      "sp_atk": 60,
+      "sp_def": 50,
+      "speed": 65
+    },
+    "evolution_prev": null,
+    "evolution_next": "Charmeleon",
+    "abilities": [
+      {
+        "name": "Blaze",
+        "is_hidden": false
+      },
+      {
+        "name": "Solar Power",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "images\\Charmander.png"
+  },
+  {
+    "name": "Squirtle",
+    "national_dex_number": 7,
+    "category": "Tiny TurtlePokémon",
+    "types": [
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 44,
+      "attack": 48,
+      "defense": 65,
+      "sp_atk": 50,
+      "sp_def": 64,
+      "speed": 43
+    },
+    "evolution_prev": null,
+    "evolution_next": "Wartortle",
+    "abilities": [
+      {
+        "name": "Torrent",
+        "is_hidden": false
+      },
+      {
+        "name": "Rain Dish",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "images\\Squirtle.png"
+  },
+  {
+    "name": "Pikachu",
+    "national_dex_number": 25,
+    "category": "Mouse Pokémon",
+    "types": [
+      "Electric"
+    ],
+    "base_stats": {
+      "hp": 35,
+      "attack": 55,
+      "defense": 30,
+      "sp_atk": 50,
+      "sp_def": 40,
+      "speed": 90
+    },
+    "evolution_prev": "Pichu",
+    "evolution_next": "Raichu",
+    "abilities": [
+      {
+        "name": "Static",
+        "is_hidden": false
+      },
+      {
+        "name": "Lightning Rod",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "images\\Pikachu.png"
+  },
+  {
+    "name": "Dragonite",
+    "national_dex_number": 149,
+    "category": "Dragon Pokémon",
+    "types": [
+      "Dragon",
+      "Flying"
+    ],
+    "base_stats": {
+      "hp": 91,
+      "attack": 134,
+      "defense": 95,
+      "sp_atk": 100,
+      "sp_def": 100,
+      "speed": 80
+    },
+    "evolution_prev": "Dragonair",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Inner Focus",
+        "is_hidden": false
+      },
+      {
+        "name": "Multiscale",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "images\\Dragonite.png"
+  },
+  {
+    "name": "Pichu",
+    "national_dex_number": 172,
+    "category": "Tiny Mouse Pokémon",
+    "types": [
+      "Electric"
+    ],
+    "base_stats": {
+      "hp": 20,
+      "attack": 40,
+      "defense": 15,
+      "sp_atk": 35,
+      "sp_def": 35,
+      "speed": 60
+    },
+    "evolution_prev": null,
+    "evolution_next": "Pikachu",
+    "abilities": [
+      {
+        "name": "Static",
+        "is_hidden": false
+      },
+      {
+        "name": "Lightning Rod",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "images\\Pichu.png"
+  },
+  {
+    "name": "Beldum",
+    "national_dex_number": 374,
+    "category": "Iron Ball Pokémon",
+    "types": [
+      "Steel",
+      "Psychic"
+    ],
+    "base_stats": {
+      "hp": 40,
+      "attack": 55,
+      "defense": 80,
+      "sp_atk": 35,
+      "sp_def": 60,
+      "speed": 30
+    },
+    "evolution_prev": null,
+    "evolution_next": "Metang",
+    "abilities": [
+      {
+        "name": "Clear Body",
+        "is_hidden": false
+      },
+      {
+        "name": "Light Metal",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "images\\Beldum.png"
+  }
+]

@@ -1,0 +1,11 @@
+pokemon.json
+
+images/
+imagens/
+
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
