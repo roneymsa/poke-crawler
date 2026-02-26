@@ -1,8 +1,10 @@
-pokemon.json
-pokemon.db
-
 images/
 imagens/
+img/
+saida.json
+saida.db
+pokemon.json
+pokemon.db
 
 __pycache__/
 *.py[cod]

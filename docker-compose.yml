@@ -1,0 +1,12 @@
+# Poké-Crawler: rodar com Docker Compose
+# Uso: docker compose run --rm crawler [args...]
+# Ex.: docker compose run --rm crawler --list pokemon_names.txt
+#      docker compose run --rm crawler Pikachu Charmander --json saida.json
+
+services:
+  crawler:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: ["--list", "pokemon_names.txt"]
