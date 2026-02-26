@@ -18,8 +18,14 @@ DEFAULT_RETRIES = 3
 class FetchError(Exception):
     """Erro ao obter a página (rede, timeout ou HTTP 4xx/5xx)."""
 
-    def __init__(self, url: str, message: Optional[str] = None):
+    def __init__(
+        self,
+        url: str,
+        message: Optional[str] = None,
+        status_code: Optional[int] = None,
+    ):
         self.url = url
+        self.status_code = status_code
         self.message = message or url
         super().__init__(self.message)
 
@@ -76,6 +82,9 @@ class BulbapediaClient:
                 response = await self._async_client.get(url)
                 response.raise_for_status()
                 return response.text
+            except httpx.HTTPStatusError as e:
+                code = e.response.status_code
+                raise FetchError(url, str(e), status_code=code) from e
             except httpx.HTTPError as e:
                 raise FetchError(url, str(e)) from e
 
@@ -91,6 +100,9 @@ class BulbapediaClient:
                 response = self._sync_client.get(url)
                 response.raise_for_status()
                 return response.text
+            except httpx.HTTPStatusError as e:
+                code = e.response.status_code
+                raise FetchError(url, str(e), status_code=code) from e
             except httpx.HTTPError as e:
                 raise FetchError(url, str(e)) from e
 

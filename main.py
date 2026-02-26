@@ -12,7 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from crawler.client import BulbapediaClient
+from crawler.client import BulbapediaClient, FetchError
 
 logger = logging.getLogger(__name__)
 from crawler.parser import BulbapediaParser
@@ -34,6 +34,12 @@ async def fetch_one(
     logger.info("Processando Pokémon: %s (%s)", name, path)
     try:
         html = await client.get_page(path)
+    except FetchError as e:
+        if e.status_code == 404:
+            logger.error("%s: Pokémon não encontrado", name)
+        else:
+            logger.error("%s: falha na requisição: %s", name, e)
+        return None
     except Exception as e:
         logger.error("%s: falha na requisição: %s", name, e)
         return None
