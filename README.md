@@ -116,3 +116,23 @@ python main.py --list pokemon_names.txt --json dados.json --db dados.db --images
 - **JSON**: arquivo com array de objetos (um por Pokémon), com todos os campos e caminho da imagem.
 - **SQLite**: tabela `pokemon` com os mesmos dados; habilidades em JSON na coluna `abilities`.
 - **Imagens**: arquivos em `images/` (ou no diretório indicado por `--images`), com nome derivado do Pokémon (ex.: `Bulbasaur.png`).
+
+## Decisões técnicas
+
+Nesta seção estão as principais escolhas de arquitetura e bibliotecas usadas no projeto, pensando em desempenho, organização do código e facilidade de manutenção.
+
+- **HTTP (httpx)**: cliente moderno, com suporte a modo síncrono e assíncrono na mesma API, além de timeouts e redirects nativos. Ideal para crawlers sem travar o processamento.
+
+- **Retries (tenacity)**: responsável por refazer requisições automaticamente em casos de falha de rede ou timeout, usando backoff exponencial para evitar sobrecarga.
+
+- **Clientes persistentes**: uso de uma única instância de `AsyncClient`/`Client` durante toda a execução, aproveitando conexões reutilizáveis (keep-alive) e reduzindo overhead.
+
+- **Parsing (BeautifulSoup)**: tolerante a HTML inconsistente da wiki e menos dependente de estruturas fixas ou XPath frágeis. Também torna o código mais legível, expressivo e fácil de manter.
+
+- **Modelos (Pydantic)**: usado para validação e serialização dos dados, garantindo consistência tanto na exportação para JSON quanto no armazenamento em SQLite. E garantindo um dos requisitos do desafio de crawler.
+
+- **Concorrência (asyncio)**: execução assíncrona com controle de paralelismo, permitindo várias requisições ao mesmo tempo, usando melhor o I/O sem sobrecarregar o servidor.
+
+- **Tratamento de erros (FetchError)**: encapsula as exceções do `httpx`, evitando acoplamento direto com a biblioteca HTTP e simplificando o tratamento no restante do código.
+
+- **Arquitetura modular**: separação clara entre requisição (`client`), extração (`parser`), modelos (`models`), armazenamento (`storage`) e download (`downloader`), com a orquestração centralizada no `main.py`. Reflete organização e separação de responsabilidades no projeto.
