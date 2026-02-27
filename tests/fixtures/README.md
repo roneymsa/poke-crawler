@@ -1,14 +1,30 @@
 # Fixtures de teste
 
-## `bulbapedia_pokemon_page.html`
+HTML de páginas da Bulbapedia usados pelos testes do parser em `tests/test_parser.py`.
 
-HTML de uma página de Pokémon da Bulbapedia usado pelos testes do parser.
+## Como os testes usam os fixtures
 
-**Como usar com HTML real:**
+- **Todos os `bulbapedia_*.html`**: os testes parametrizados (`TestBulbapediaParserEachFixture`) rodam com cada arquivo — validam que o parse retorna um `Pokemon` com nome, tipos e base stats.
+- **`bulbapedia_pikachu.html`**: os testes com valores exatos (nome, número na dex, tipos, stats, habilidades, evoluções) usam este fixture.
 
-1. Abra uma página na Bulbapedia, por exemplo:
-   - https://bulbapedia.bulbagarden.net/wiki/Pikachu_(Pokémon)
-2. Clique com o botão direito → "Ver código-fonte da página" (ou Salvar como).
-3. Copie o HTML e substitua o conteúdo de `bulbapedia_pokemon_page.html` (ou salve o arquivo completo aqui).
+Ao adicionar um novo arquivo `bulbapedia_<nome>.html` na pasta, ele passa a ser incluído automaticamente nos testes parametrizados.
 
-Os testes em `tests/test_parser.py` vão usar esse HTML para validar nome, número na dex, tipos, stats, habilidades e evoluções. Se a estrutura da Bulbapedia mudar, os testes ajudam a identificar o que quebrou.
+## Fixtures disponíveis
+
+| Arquivo | Pokémon |
+|---------|---------|
+| `bulbapedia_beldum.html` | Beldum |
+| `bulbapedia_bulbasaur.html` | Bulbasaur |
+| `bulbapedia_charmander.html` | Charmander |
+| `bulbapedia_dragonite.html` | Dragonite |
+| `bulbapedia_pichu.html` | Pichu |
+| `bulbapedia_pidgey.html` | Pidgey |
+| `bulbapedia_pikachu.html` | Pikachu |
+| `bulbapedia_squirtle.html` | Squirtle |
+| `bulbapedia_teste.html` | teste (placeholder) |
+
+## Como atualizar ou adicionar fixtures
+
+1. Abra a página na Bulbapedia (ex.: https://bulbapedia.bulbagarden.net/wiki/Pikachu_(Pokémon)).
+2. Botão direito → "Ver código-fonte da página" (ou Salvar como).
+3. Copie o HTML e salve no arquivo correspondente em `tests/fixtures/` (ex.: `bulbapedia_pikachu.html`), ou crie um novo `bulbapedia_<nome>.html`.
