@@ -175,48 +175,57 @@ class BulbapediaParser:
                     types.append(t)
         return types[:2]
 
+    def _find_base_stats_table(self, soup: BeautifulSoup):
+        """Localiza a tabela de Base stats (span#Base_stats → h4 → próxima table)."""
+        span = soup.find("span", id="Base_stats")
+        if not span:
+            return None
+        h4 = span.find_parent("h4")
+        if not h4:
+            return None
+        return h4.find_next("table")
+
+    def _normalize_stat_name(self, name: str) -> Optional[str]:
+        """Retorna a chave do stat no nosso schema (hp, attack, ...) ou None."""
+        if not name:
+            return None
+        normalized = name.replace(":", "").strip().lower()
+        return STAT_MAP.get(normalized)
+
+    def _parse_stat_row(self, row) -> Optional[tuple[str, int]]:
+        """Extrai (key, value) de uma tr da tabela de base stats, ou None se inválida."""
+        th = row.find("th")
+        if not th:
+            return None
+        divs = th.find_all("div", recursive=False)
+        if len(divs) != 2:
+            return None
+        stat_name = divs[0].get_text(strip=True)
+        stat_value = divs[1].get_text(strip=True)
+        key = self._normalize_stat_name(stat_name)
+        if not key:
+            return None
+        val = _safe_int(stat_value)
+        if val is None or not (0 <= val <= 255):
+            return None
+        return (key, val)
+
     def _extract_base_stats(self, soup: BeautifulSoup) -> BaseStats:
         """
         Extrai base stats da seção Base stats: span#Base_stats → h4 → próxima tabela.
         Em cada tr, th com 2 divs (recursive=False): primeiro = nome do stat, segundo = valor.
         """
         stats: dict[str, int] = {}
-
-        span = soup.find("span", id="Base_stats")
-        if not span:
-            return self._base_stats_from_map(stats)
-
-        h4 = span.find_parent("h4")
-        if not h4:
-            return self._base_stats_from_map(stats)
-
-        table = h4.find_next("table")
+        table = self._find_base_stats_table(soup)
         if not table:
             return self._base_stats_from_map(stats)
-
         for row in table.find_all("tr"):
-            th = row.find("th")
-            if not th:
-                continue
-
-            divs = th.find_all("div", recursive=False)
-            if len(divs) != 2:
-                continue
-
-            stat_name = divs[0].get_text(strip=True).replace(":", "").lower()
-            stat_value = divs[1].get_text(strip=True)
-
-            key = STAT_MAP.get(stat_name)
-            if not key:
-                continue
-
-            val = _safe_int(stat_value)
-            if val is not None and 0 <= val <= 255:
+            parsed = self._parse_stat_row(row)
+            if parsed:
+                key, val = parsed
                 stats[key] = val
-
             if len(stats) == 6:
                 break
-
         return self._base_stats_from_map(stats)
 
     def _base_stats_from_map(self, stats: dict[str, int]) -> BaseStats:
@@ -256,20 +265,11 @@ class BulbapediaParser:
             for s in table.find_all("small")
         )
 
-    def _extract_evolution_chain(self, evolution_div) -> list[str]:
-        """
-        Extrai a linha evolutiva (nomes na ordem) a partir da div da seção Evolution.
-        Ordem pelas tabelas (slots), não pela ordem dos links no DOM.
-        Suporta múltiplas evoluções e formas (ex. Raichu (Alolan)).
-        """
+    def _find_valid_evolution_tables(self, evolution_div):
+        """Retorna apenas tabelas de evolução válidas (com stage+link, sem nested válidas)."""
         if not evolution_div:
             return []
-        chain: list[str] = []
-        link_re = re.compile(r"_\(Pok", re.I)
-        stage_re = re.compile(
-            r"^(Unevolved|First Evolution|Second Evolution)$", re.I
-        )
-
+        result = []
         for table in evolution_div.find_all("table"):
             if not self._evolution_table_has_stage_and_link(table):
                 continue
@@ -278,31 +278,57 @@ class BulbapediaParser:
                 for t in table.find_all("table")
             ):
                 continue
-            stage_small = None
-            for s in table.find_all("small"):
-                if stage_re.match(s.get_text(strip=True)):
-                    stage_small = s
-                    break
-            if not stage_small:
+            result.append(table)
+        return result
+
+    def _extract_form_name(self, table) -> Optional[str]:
+        """Extrai o nome da forma (ex. Alolan) de um small 'X Form' na tabela, se houver."""
+        stage_re = re.compile(
+            r"^(Unevolved|First Evolution|Second Evolution)$", re.I
+        )
+        for form_s in table.find_all("small"):
+            text = form_s.get_text(strip=True)
+            if stage_re.match(text):
                 continue
-            a = table.find("a", href=link_re) or table.find(
-                "a", class_=re.compile(r"selflink", re.I)
-            )
-            if not a:
-                continue
-            name = a.get_text(strip=True)
-            if not name or name in ("→", "←", "↗", "↘"):
-                continue
-            for form_s in table.find_all("small"):
-                if form_s is stage_small:
-                    continue
-                form_text = form_s.get_text(strip=True)
-                if form_text and "Form" in form_text:
-                    form_name = form_text.replace(" Form", "").strip()
-                    if form_name:
-                        name = f"{name} ({form_name})"
-                    break
-            chain.append(name)
+            if text and "Form" in text:
+                form_name = text.replace(" Form", "").strip()
+                if form_name:
+                    return form_name
+        return None
+
+    def _parse_evolution_table(self, table) -> Optional[str]:
+        """Extrai o nome do Pokémon (com forma, se houver) de uma tabela de evolução."""
+        link_re = re.compile(r"_\(Pok", re.I)
+        stage_re = re.compile(
+            r"^(Unevolved|First Evolution|Second Evolution)$", re.I
+        )
+        stage_small = None
+        for s in table.find_all("small"):
+            if stage_re.match(s.get_text(strip=True)):
+                stage_small = s
+                break
+        if not stage_small:
+            return None
+        a = table.find("a", href=link_re) or table.find(
+            "a", class_=re.compile(r"selflink", re.I)
+        )
+        if not a:
+            return None
+        name = a.get_text(strip=True)
+        if not name or name in ("→", "←", "↗", "↘"):
+            return None
+        form_name = self._extract_form_name(table)
+        if form_name:
+            name = f"{name} ({form_name})"
+        return name
+
+    def _extract_evolution_chain(self, evolution_div) -> list[str]:
+        tables = self._find_valid_evolution_tables(evolution_div)
+        chain: list[str] = []
+        for table in tables:
+            name = self._parse_evolution_table(table)
+            if name:
+                chain.append(name)
         return chain
 
     def _resolve_prev_next(
@@ -401,7 +427,23 @@ class BulbapediaParser:
                 return _dedupe_abilities(abilities)
         return []
 
+    def _image_matches_pokemon(self, img, name_norm: str) -> bool:
+        """True se alt/title do img ou do link pai contêm o nome do Pokémon."""
+        if not name_norm:
+            return False
+        alt = (img.get("alt") or "").lower()
+        title = (img.get("title") or "").lower()
+        parent = img.find_parent("a")
+        parent_title = (parent.get("title") or "").lower() if parent else ""
+        text_blob = " ".join([alt, title, parent_title])
+        return name_norm in text_blob
+
+    def _image_src_allowed(self, src: str) -> bool:
+        """True se o src é de domínio permitido (archives/bulbagarden)."""
+        return bool(src and re.search(r"(archives|bulbagarden)", src, re.I))
+
     def _extract_image_url(self, soup: BeautifulSoup, pokemon_name: Optional[str] = None) -> Optional[str]:
+        """Extrai a URL da imagem principal do Pokémon na infobox."""
         name_norm = pokemon_name.lower() if pokemon_name else None
         if not name_norm:
             return None
@@ -410,14 +452,9 @@ class BulbapediaParser:
                 src = img.get("src") or ""
                 if not src:
                     continue
-                alt = (img.get("alt") or "").lower()
-                title = (img.get("title") or "").lower()
-                parent = img.find_parent("a")
-                parent_title = (parent.get("title") or "").lower() if parent else ""
-                text_blob = " ".join([alt, title, parent_title])
-                if name_norm not in text_blob:
+                if not self._image_matches_pokemon(img, name_norm):
                     continue
-                if not re.search(r"(archives|bulbagarden)", src, re.I):
+                if not self._image_src_allowed(src):
                     continue
                 return _full_image_url(src)
         return None
