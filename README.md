@@ -52,7 +52,7 @@ docker compose run --rm crawler --list pokemon_names.txt --json output/saida.jso
 **Executar os testes no Docker:**
 
 ```bash
-docker compose run --rm crawler python -m pytest tests/ -v
+docker compose run --rm --entrypoint="" crawler python -m pytest tests/ -v
 ```
 
 **Build manual da imagem (opcional):**

@@ -5,8 +5,7 @@
 #   docker compose run --rm crawler Pikachu Charmander
 #   docker compose run --rm crawler --list pokemon_names.txt --workers 5
 #
-# Testes:
-#   docker compose run --rm crawler python -m pytest tests/ -v
+#   docker compose run --rm --entrypoint="" crawler python -m pytest tests/ -v
 
 services:
   crawler:
