@@ -1,8 +1,8 @@
 """
 Testes do parser Bulbapedia.
-Usam o HTML em tests/fixtures/bulbapedia_pokemon_page.html.
-Você pode substituir esse arquivo por HTML real de uma página da Bulbapedia
-para validar o parsing com dados reais.
+Usam os HTML em tests/fixtures/bulbapedia_*.html.
+Cada fixture é rodado nos testes parametrizados; testes com valores exatos
+usam bulbapedia_pikachu.html.
 """
 
 import pytest
@@ -21,14 +21,30 @@ from crawler.domain.models import AbilityInfo, BaseStats, Pokemon
 
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
-POKEMON_PAGE_HTML = FIXTURES_DIR / "bulbapedia_pokemon_page.html"
+# Fixture usado pelos testes que checam valores exatos (Pikachu)
+PIKACHU_FIXTURE = FIXTURES_DIR / "bulbapedia_pikachu.html"
 
 
-def _load_fixture_html() -> str:
-    """Carrega o HTML do fixture. Preencha o arquivo com HTML real se quiser."""
-    if not POKEMON_PAGE_HTML.exists():
-        pytest.skip(f"Fixture não encontrado: {POKEMON_PAGE_HTML}")
-    return POKEMON_PAGE_HTML.read_text(encoding="utf-8")
+def _all_bulbapedia_fixtures():
+    """Lista (path, expected_name) de todos os fixtures bulbapedia_*.html."""
+    if not FIXTURES_DIR.exists():
+        return []
+    out = []
+    for p in sorted(FIXTURES_DIR.glob("bulbapedia_*.html")):
+        # bulbapedia_pikachu.html -> "Pikachu", bulbapedia_bulbasaur.html -> "Bulbasaur"
+        stem = p.stem
+        if stem.startswith("bulbapedia_"):
+            name_part = stem.replace("bulbapedia_", "", 1)
+            expected_name = name_part.replace("_", " ").title()
+            out.append((p, expected_name))
+    return out
+
+
+def _load_fixture_html(path: Path) -> str:
+    """Carrega o HTML do fixture no path."""
+    if not path.exists():
+        pytest.skip(f"Fixture não encontrado: {path}")
+    return path.read_text(encoding="utf-8")
 
 
 # ---- Testes das funções auxiliares (módulo) ----
@@ -127,12 +143,43 @@ class TestDedupeAbilities:
 
 # ---- Testes do BulbapediaParser (fixture HTML) ----
 
+# Todos os fixtures para testes parametrizados: (path, nome esperado do arquivo)
+_ALL_FIXTURES = _all_bulbapedia_fixtures()
+BULBAPEDIA_FIXTURE_IDS = [(p, name) for p, name in _ALL_FIXTURES]
+FIXTURE_IDS_NAMES = [p.stem for p, _ in _ALL_FIXTURES]
+
+
+@pytest.mark.parametrize("fixture_path,expected_name_from_file", BULBAPEDIA_FIXTURE_IDS, ids=FIXTURE_IDS_NAMES)
+class TestBulbapediaParserEachFixture:
+    """Testes que rodam com cada fixture em tests/fixtures/bulbapedia_*.html."""
+
+    def test_parse_returns_pokemon(self, fixture_path, expected_name_from_file):
+        html = _load_fixture_html(fixture_path)
+        parser = BulbapediaParser()
+        pokemon = parser.parse(html)
+        assert isinstance(pokemon, Pokemon)
+        assert pokemon.name  # nome extraído não vazio
+
+    def test_parse_has_types_list(self, fixture_path, expected_name_from_file):
+        html = _load_fixture_html(fixture_path)
+        parser = BulbapediaParser()
+        pokemon = parser.parse(html)
+        assert isinstance(pokemon.types, list)
+
+    def test_parse_has_base_stats(self, fixture_path, expected_name_from_file):
+        html = _load_fixture_html(fixture_path)
+        parser = BulbapediaParser()
+        pokemon = parser.parse(html)
+        assert pokemon.base_stats is not None
+        assert isinstance(pokemon.base_stats, BaseStats)
+
+
 class TestBulbapediaParserWithFixture:
-    """Testes que usam tests/fixtures/bulbapedia_pokemon_page.html."""
+    """Testes com valores exatos usando tests/fixtures/bulbapedia_pikachu.html."""
 
     @pytest.fixture
     def html(self):
-        return _load_fixture_html()
+        return _load_fixture_html(PIKACHU_FIXTURE)
 
     @pytest.fixture
     def parser(self):
