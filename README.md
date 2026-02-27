@@ -4,20 +4,32 @@ Crawler que extrai informações detalhadas de Pokémon a partir do portal [Bulb
 
 ## Estrutura do projeto
 
+Organização em **Domain Driven Design (DDD)**: domínio em `crawler/domain/` (modelos, serviços, exceções); infra e aplicação em `crawler/` e `main.py`.
+
 ```
 poke-crawler/
-├── main.py              # Ponto de entrada e orquestração
+├── main.py                    # Ponto de entrada e orquestração
 ├── requirements.txt
-├── Dockerfile           # Imagem para rodar o crawler
-├── docker-compose.yml   # Orquestração com volume montado
+├── Dockerfile                 # Imagem para rodar o crawler
+├── docker-compose.yml        # Orquestração com volume montado
 ├── crawler/
 │   ├── __init__.py
-│   ├── client.py        # HTTP (httpx) com retries
-│   ├── parser.py        # Extração com BeautifulSoup
-│   ├── models.py        # Modelos Pydantic
-│   ├── storage.py       # Exportação JSON e SQLite
-│   └── downloader.py    # Download de imagens
-└── images/              # Fotos dos Pokémon (criada ao rodar)
+│   ├── client.py             # HTTP (httpx) com retries
+│   ├── parser.py             # Extração com BeautifulSoup
+│   ├── downloader.py         # Download de imagens
+│   └── domain/               # Domínio (DDD)
+│       ├── __init__.py
+│       ├── exceptions.py     # Exceções de domínio
+│       ├── models/           # Entidades e value objects (Pydantic)
+│       │   ├── __init__.py
+│       │   └── pokemon.py
+│       └── services/         # Serviços de domínio
+│           ├── __init__.py
+│           └── storage.py    # Exportação JSON e SQLite
+├── tests/
+│   ├── test_parser.py
+│   └── fixtures/             # HTML da Bulbapedia para testes
+└── images/                   # Fotos dos Pokémon (criada ao rodar)
 ```
 
 ## Requisitos
@@ -162,4 +174,4 @@ Nesta seção estão as principais escolhas de arquitetura e bibliotecas usadas 
 
 - **Tratamento de erros (FetchError)**: encapsula as exceções do `httpx`, evitando acoplamento direto com a biblioteca HTTP e simplificando o tratamento no restante do código.
 
-- **Arquitetura modular**: separação clara entre requisição (`client`), extração (`parser`), modelos (`models`), armazenamento (`storage`) e download (`downloader`), com a orquestração centralizada no `main.py`. Reflete organização e separação de responsabilidades no projeto.
+- **Arquitetura (DDD)**: domínio em `crawler/domain/` (modelos, serviços como `storage`, exceções); camada de aplicação com requisição (`client`), extração (`parser`) e download (`downloader`); orquestração em `main.py`. Separação clara de responsabilidades e manutenção do núcleo de negócio no domínio.
