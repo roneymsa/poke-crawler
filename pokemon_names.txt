@@ -1,5 +1,7 @@
 Bulbasaur
 Charmander
+Charmander
+Charm
 Squirtle
 Pikachu
 Dragonite
@@ -7,3 +9,6 @@ pichu
 beldum
 teste
 Pidgey
+Basculin
+NotFound
+Nidoran
