@@ -4,7 +4,7 @@ import re
 from typing import Optional
 from bs4 import BeautifulSoup
 
-from crawler.domain.models import AbilityInfo, BaseStats, Pokemon
+from crawler.domain.models import AbilityInfo, BaseStats, GenderRatio, Pokemon
 
 BULBAPEDIA_IMAGE_BASE = "https://bulbapedia.bulbagarden.net"
 
@@ -87,6 +87,7 @@ class BulbapediaParser:
         evolution_prev, evolution_next = self._extract_evolutions(
             soup, current_name=name
         )
+        gender_ratio = self._extract_gender_ratio(soup)
 
         return Pokemon(
             name=name,
@@ -98,6 +99,7 @@ class BulbapediaParser:
             evolution_next=evolution_next or None,
             abilities=abilities,
             image_path=None,
+            gender_ratio=gender_ratio,
         )
 
     def get_image_url(self, html: str, pokemon_name: Optional[str] = None) -> Optional[str]:
@@ -458,3 +460,42 @@ class BulbapediaParser:
                     continue
                 return _full_image_url(src)
         return None
+
+    def _extract_gender_ratio(self, soup: BeautifulSoup) -> Optional[GenderRatio]:
+        """Extrai a proporção de gênero (percentuais float) do Pokémon na infobox."""
+        gender_table = None
+        for table in soup.find_all("table"):
+            text = table.get_text(" ", strip=True).lower()
+            if "gender ratio" in text:
+                gender_table = table
+                break
+
+        if not gender_table:
+            return None
+
+        def parse_percent(raw: str) -> Optional[float]:
+            if not raw:
+                return None
+            m = re.search(r"(\d+(?:\.\d+)?)\s*%", raw.strip())
+            if not m:
+                return None
+            try:
+                return float(m.group(1))
+            except ValueError:
+                return None
+
+        male_pct: Optional[float] = None
+        female_pct: Optional[float] = None
+        for span in gender_table.find_all("span"):
+            text = span.get_text(strip=True)
+            if not text or "%" not in text:
+                continue
+            lower = text.lower()
+            if "female" in lower:
+                female_pct = parse_percent(text)
+            elif "male" in lower:
+                male_pct = parse_percent(text)
+
+        if male_pct is None and female_pct is None:
+            return None
+        return GenderRatio(male=male_pct, female=female_pct)

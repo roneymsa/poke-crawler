@@ -16,6 +16,8 @@ poke-crawler/
 │   ├── __init__.py
 │   ├── client.py             # HTTP (httpx) com retries
 │   ├── parser.py             # Extração com BeautifulSoup
+│   ├── search.py             # Usa a api do bubapedia pra validar uma busca de nome
+│   ├── national_dex.py       # Extração de links da National Pokédex (--get-all)
 │   ├── downloader.py         # Download de imagens
 │   └── domain/               # Domínio (DDD)
 │       ├── __init__.py
@@ -56,6 +58,9 @@ docker compose run --rm crawler Pikachu Charmander Squirtle
 
 # Lista em arquivo e mais workers
 docker compose run --rm crawler --list pokemon_names.txt --workers 5
+
+# Extrair todos os Pokémon da National Pokédex (salva em todos_pokemons.json / todos_pokemons.db)
+docker compose run --rm crawler --get-all
 
 # JSON e imagens em pastas customizadas
 docker compose run --rm crawler --list pokemon_names.txt --json output/saida.json --images output/img
@@ -98,12 +103,21 @@ python main.py Bulbasaur Charmander Squirtle
 python main.py --list pokemon_names.txt
 ```
 
+**Todos os Pokémon da National Pokédex:**
+
+Extrai a lista da [página oficial](https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number), processa com até 5 requisições em paralelo e salva em `todos_pokemons.json` e `todos_pokemons.db`.
+
+```bash
+python main.py --get-all
+```
+
 **Opções:**
 
 | Argumento | Descrição | Default |
 |-----------|------------|---------|
 | `NOMES` | Nomes dos Pokémon (posicional) | — |
 | `--list` / `-l FILE` | Arquivo com um nome por linha | — |
+| `--get-all` | Extrair todos da National Pokédex (salva em `todos_pokemons.json` / `todos_pokemons.db`, máx. 5 em paralelo) | — |
 | `--json` / `-j FILE` | Caminho do arquivo JSON | `pokemon.json` |
 | `--db FILE` | Caminho do banco SQLite | `pokemon.db` |
 | `--images` / `-i DIR` | Pasta para salvar imagens | `images` |
@@ -152,8 +166,8 @@ No Windows, use `py -m pytest` se `python` não estiver no PATH.
 
 ### 4. Saída
 
-- **JSON**: arquivo com array de objetos (um por Pokémon), com todos os campos e caminho da imagem.
-- **SQLite**: tabela `pokemon` com os mesmos dados; habilidades em JSON na coluna `abilities`.
+- **JSON**: arquivo com array de objetos (um por Pokémon), com todos os campos e caminho da imagem. Com `--get-all`, o arquivo gerado é `todos_pokemons.json`.
+- **SQLite**: tabela `pokemon` com os mesmos dados; habilidades em JSON na coluna `abilities`. Com `--get-all`, o arquivo gerado é `todos_pokemons.db`.
 - **Imagens**: arquivos em `images/` (ou no diretório indicado por `--images`), com nome derivado do Pokémon (ex.: `Bulbasaur.png`).
 
 ## Decisões técnicas

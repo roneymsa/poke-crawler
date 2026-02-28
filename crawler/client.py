@@ -1,6 +1,6 @@
 """Cliente HTTP para requisições à Bulbapedia com retries e conexão persistente."""
 
-from typing import Optional
+from typing import Any, Optional
 
 import httpx
 from tenacity import (
@@ -91,6 +91,23 @@ class BulbapediaClient:
                 code = e.response.status_code
                 raise FetchError(url, str(e), status_code=code) from e
             except httpx.HTTPError as e:
+                raise FetchError(url, str(e)) from e
+
+        return _fetch()
+
+    def get_json_sync(self, path_or_url: str) -> Any:
+        """GET e retorna o corpo como JSON (list ou dict). Levanta FetchError em falha."""
+        url = self._build_url(path_or_url)
+
+        @_make_retry_decorator(self.max_retries)
+        def _fetch() -> Any:
+            try:
+                response = self._sync_client.get(url)
+                response.raise_for_status()
+                return response.json()
+            except httpx.HTTPStatusError as e:
+                raise FetchError(url, str(e), status_code=e.response.status_code) from e
+            except (httpx.HTTPError, ValueError) as e:
                 raise FetchError(url, str(e)) from e
 
         return _fetch()

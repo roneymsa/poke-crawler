@@ -5,7 +5,16 @@ import sqlite3
 from pathlib import Path
 from typing import List
 
-from crawler.domain.models import AbilityInfo, BaseStats, Pokemon
+from crawler.domain.models import AbilityInfo, BaseStats, GenderRatio, Pokemon
+
+
+def _deduplicate_by_name(pokemons: List[Pokemon]) -> List[Pokemon]:
+    """Remove duplicatas pela referência forte (nome canônico). Mantém a última ocorrência."""
+    by_name: dict[str, Pokemon] = {}
+    for p in pokemons:
+        if p.name:
+            by_name[p.name] = p
+    return list(by_name.values())
 
 
 class Storage:
@@ -15,7 +24,8 @@ class Storage:
         self.db_path = db_path
 
     def save_json(self, pokemons: List[Pokemon], path: str = "pokemon.json") -> None:
-        """Exporta a lista de Pokémon para um arquivo JSON."""
+        """Exporta a lista de Pokémon para um arquivo JSON (um por nome canônico)."""
+        pokemons = _deduplicate_by_name(pokemons)
         data = [p.model_dump(mode="json") for p in pokemons]
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
@@ -31,7 +41,7 @@ class Storage:
         conn.executescript("""
             CREATE TABLE IF NOT EXISTS pokemon (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
+                name TEXT NOT NULL UNIQUE,
                 national_dex_number INTEGER,
                 category TEXT,
                 types TEXT,
@@ -45,13 +55,15 @@ class Storage:
                 evolution_next TEXT,
                 abilities TEXT,
                 image_path TEXT,
+                gender_ratio TEXT,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             );
         """)
         conn.commit()
 
     def save_sqlite(self, pokemons: List[Pokemon]) -> None:
-        """Persiste a lista de Pokémon no SQLite."""
+        """Persiste a lista de Pokémon no SQLite (upsert por nome canônico)."""
+        pokemons = _deduplicate_by_name(pokemons)
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
         conn = sqlite3.connect(self.db_path)
         try:
@@ -61,31 +73,64 @@ class Storage:
                     {"name": a.name, "is_hidden": a.is_hidden}
                     for a in p.abilities
                 ], ensure_ascii=False)
-                conn.execute(
-                    """
-                    INSERT INTO pokemon (
-                        name, national_dex_number, category, types,
-                        hp, attack, defense, sp_atk, sp_def, speed,
-                        evolution_prev, evolution_next, abilities, image_path
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        p.name,
-                        p.national_dex_number,
-                        p.category,
-                        json.dumps(p.types, ensure_ascii=False),
-                        p.base_stats.hp,
-                        p.base_stats.attack,
-                        p.base_stats.defense,
-                        p.base_stats.sp_atk,
-                        p.base_stats.sp_def,
-                        p.base_stats.speed,
-                        p.evolution_prev,
-                        p.evolution_next,
-                        abilities_json,
-                        p.image_path,
-                    ),
+                gender_ratio_json = (
+                    json.dumps(p.gender_ratio.model_dump(mode="json"), ensure_ascii=False)
+                    if p.gender_ratio else None
                 )
+                row = (
+                    p.national_dex_number,
+                    p.category,
+                    json.dumps(p.types, ensure_ascii=False),
+                    p.base_stats.hp,
+                    p.base_stats.attack,
+                    p.base_stats.defense,
+                    p.base_stats.sp_atk,
+                    p.base_stats.sp_def,
+                    p.base_stats.speed,
+                    p.evolution_prev,
+                    p.evolution_next,
+                    abilities_json,
+                    p.image_path,
+                    gender_ratio_json,
+                    p.name,
+                )
+                cur = conn.execute(
+                    """
+                    UPDATE pokemon SET
+                        national_dex_number = ?, category = ?, types = ?,
+                        hp = ?, attack = ?, defense = ?, sp_atk = ?, sp_def = ?, speed = ?,
+                        evolution_prev = ?, evolution_next = ?, abilities = ?, image_path = ?, gender_ratio = ?
+                    WHERE name = ?
+                    """,
+                    row,
+                )
+                if cur.rowcount == 0:
+                    conn.execute(
+                        """
+                        INSERT INTO pokemon (
+                            name, national_dex_number, category, types,
+                            hp, attack, defense, sp_atk, sp_def, speed,
+                            evolution_prev, evolution_next, abilities, image_path, gender_ratio
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (
+                            p.name,
+                            p.national_dex_number,
+                            p.category,
+                            json.dumps(p.types, ensure_ascii=False),
+                            p.base_stats.hp,
+                            p.base_stats.attack,
+                            p.base_stats.defense,
+                            p.base_stats.sp_atk,
+                            p.base_stats.sp_def,
+                            p.base_stats.speed,
+                            p.evolution_prev,
+                            p.evolution_next,
+                            abilities_json,
+                            p.image_path,
+                            gender_ratio_json,
+                        ),
+                    )
             conn.commit()
         finally:
             conn.close()
@@ -98,18 +143,26 @@ class Storage:
             rows = conn.execute("""
                 SELECT name, national_dex_number, category, types,
                        hp, attack, defense, sp_atk, sp_def, speed,
-                       evolution_prev, evolution_next, abilities, image_path
+                       evolution_prev, evolution_next, abilities, image_path, gender_ratio
                 FROM pokemon
             """).fetchall()
             result = []
             for row in rows:
                 (name, ndex, category, types_json, hp, atk, defe, spa, spd, spe,
-                 ev_prev, ev_next, abilities_json, image_path) = row
+                 ev_prev, ev_next, abilities_json, image_path, gender_ratio) = row
                 types = json.loads(types_json) if types_json else []
                 abilities = [
                     AbilityInfo(name=a["name"], is_hidden=a.get("is_hidden", False))
                     for a in json.loads(abilities_json or "[]")
                 ]
+                gender_ratio_obj = None
+                if gender_ratio:
+                    try:
+                        data = json.loads(gender_ratio)
+                        if data is not None:
+                            gender_ratio_obj = GenderRatio.model_validate(data)
+                    except (json.JSONDecodeError, ValueError):
+                        pass
                 result.append(Pokemon(
                     name=name,
                     national_dex_number=ndex,
@@ -121,6 +174,7 @@ class Storage:
                     evolution_next=ev_next,
                     abilities=abilities,
                     image_path=image_path,
+                    gender_ratio=gender_ratio_obj,
                 ))
             return result
         finally:

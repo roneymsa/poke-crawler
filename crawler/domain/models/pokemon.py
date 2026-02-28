@@ -26,6 +26,13 @@ class AbilityInfo(BaseModel):
     is_hidden: bool = False
 
 
+class GenderRatio(BaseModel):
+    """Proporção de gênero em percentuais (0–100). No JSON: objeto com male e female."""
+
+    male: Optional[float] = Field(default=None, ge=0, le=100, description="Percentual masculino")
+    female: Optional[float] = Field(default=None, ge=0, le=100, description="Percentual feminino")
+
+
 class Pokemon(BaseModel):
     """Entidade de domínio: Pokémon com dados da Bulbapedia."""
 
@@ -38,6 +45,7 @@ class Pokemon(BaseModel):
     evolution_next: Optional[str] = None
     abilities: list[AbilityInfo] = Field(default_factory=list)
     image_path: Optional[str] = None
+    gender_ratio: Optional[GenderRatio] = None
 
     class Config:
         populate_by_name = True
