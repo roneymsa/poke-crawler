@@ -13,3 +13,6 @@ Basculin
 NotFound
 Nidoran
 Lucari
+gimmighoul
+Shaymin
+Urshifu

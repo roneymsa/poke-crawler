@@ -45,6 +45,7 @@ class Pokemon(BaseModel):
     evolution_next: Optional[str] = None
     abilities: list[AbilityInfo] = Field(default_factory=list)
     image_path: Optional[str] = None
+    form_image_paths: Optional[dict[str, str]] = None
     gender_ratio: Optional[GenderRatio] = None
 
     class Config:

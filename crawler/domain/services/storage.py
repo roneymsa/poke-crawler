@@ -55,10 +55,16 @@ class Storage:
                 evolution_next TEXT,
                 abilities TEXT,
                 image_path TEXT,
+                form_image_paths TEXT,
                 gender_ratio TEXT,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             );
         """)
+        try:
+            conn.execute("ALTER TABLE pokemon ADD COLUMN form_image_paths TEXT")
+            conn.commit()
+        except sqlite3.OperationalError:
+            pass
         conn.commit()
 
     def _upsert_one(self, conn: sqlite3.Connection, p: Pokemon) -> None:
@@ -70,6 +76,9 @@ class Storage:
         gender_ratio_json = (
             json.dumps(p.gender_ratio.model_dump(mode="json"), ensure_ascii=False)
             if p.gender_ratio else None
+        )
+        form_image_paths_json = (
+            json.dumps(p.form_image_paths, ensure_ascii=False) if p.form_image_paths else None
         )
         row = (
             p.national_dex_number,
@@ -85,6 +94,7 @@ class Storage:
             p.evolution_next,
             abilities_json,
             p.image_path,
+            form_image_paths_json,
             gender_ratio_json,
             p.name,
         )
@@ -93,7 +103,7 @@ class Storage:
             UPDATE pokemon SET
                 national_dex_number = ?, category = ?, types = ?,
                 hp = ?, attack = ?, defense = ?, sp_atk = ?, sp_def = ?, speed = ?,
-                evolution_prev = ?, evolution_next = ?, abilities = ?, image_path = ?, gender_ratio = ?
+                evolution_prev = ?, evolution_next = ?, abilities = ?, image_path = ?, form_image_paths = ?, gender_ratio = ?
             WHERE name = ?
             """,
             row,
@@ -104,8 +114,8 @@ class Storage:
                 INSERT INTO pokemon (
                     name, national_dex_number, category, types,
                     hp, attack, defense, sp_atk, sp_def, speed,
-                    evolution_prev, evolution_next, abilities, image_path, gender_ratio
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    evolution_prev, evolution_next, abilities, image_path, form_image_paths, gender_ratio
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     p.name,
@@ -122,6 +132,7 @@ class Storage:
                     p.evolution_next,
                     abilities_json,
                     p.image_path,
+                    form_image_paths_json,
                     gender_ratio_json,
                 ),
             )
@@ -163,13 +174,13 @@ class Storage:
             rows = conn.execute("""
                 SELECT name, national_dex_number, category, types,
                        hp, attack, defense, sp_atk, sp_def, speed,
-                       evolution_prev, evolution_next, abilities, image_path, gender_ratio
+                       evolution_prev, evolution_next, abilities, image_path, form_image_paths, gender_ratio
                 FROM pokemon
             """).fetchall()
             result = []
             for row in rows:
                 (name, ndex, category, types_json, hp, atk, defe, spa, spd, spe,
-                 ev_prev, ev_next, abilities_json, image_path, gender_ratio) = row
+                 ev_prev, ev_next, abilities_json, image_path, form_image_paths_json, gender_ratio) = row
                 types = json.loads(types_json) if types_json else []
                 abilities = [
                     AbilityInfo(name=a["name"], is_hidden=a.get("is_hidden", False))
@@ -183,6 +194,12 @@ class Storage:
                             gender_ratio_obj = GenderRatio.model_validate(data)
                     except (json.JSONDecodeError, ValueError):
                         pass
+                form_image_paths = None
+                if form_image_paths_json:
+                    try:
+                        form_image_paths = json.loads(form_image_paths_json)
+                    except (json.JSONDecodeError, TypeError):
+                        pass
                 result.append(Pokemon(
                     name=name,
                     national_dex_number=ndex,
@@ -194,6 +211,7 @@ class Storage:
                     evolution_next=ev_next,
                     abilities=abilities,
                     image_path=image_path,
+                    form_image_paths=form_image_paths,
                     gender_ratio=gender_ratio_obj,
                 ))
             return result

@@ -280,6 +280,50 @@ class TestBulbapediaParserNidoran:
         assert p_f.base_stats.hp == 55 and p_m.base_stats.hp == 46
         assert p_f.evolution_next == "Nidorina" and p_m.evolution_next == "Nidorino"
 
+
+class TestBulbapediaParserBasculinImage:
+    """Basculin tem 3 formas (Red/Blue/White); extração genérica por alt/title e src."""
+
+    def test_basculin_image_specs_returns_three_forms(self):
+        path = FIXTURES_DIR / "bulbapedia_basculin.html"
+        html = _load_fixture_html(path)
+        parser = BulbapediaParser()
+        specs = parser.get_image_specs(html, "Basculin")
+        assert len(specs) == 3
+        form_keys = {k for k, _ in specs}
+        assert "Red_Striped" in form_keys
+        assert "Blue_Striped" in form_keys
+        assert "White_Striped" in form_keys
+        urls = [u for _, u in specs]
+        assert any("basculin-red" in u.lower() for u in urls)
+        assert any("basculin-blue" in u.lower() for u in urls)
+        assert any("basculin-white" in u.lower() for u in urls)
+
+    def test_basculin_get_image_url_returns_first_form(self):
+        path = FIXTURES_DIR / "bulbapedia_basculin.html"
+        html = _load_fixture_html(path)
+        parser = BulbapediaParser()
+        url = parser.get_image_url(html, "Basculin")
+        assert url is not None
+        assert "basculin-red" in url.lower()
+
+
+class TestBulbapediaParserCharmanderImage:
+    """Charmander não tem formas alternativas; deve retornar só a imagem principal."""
+
+    def test_charmander_image_specs_returns_single_main_image(self):
+        path = FIXTURES_DIR / "bulbapedia_charmander.html"
+        html = _load_fixture_html(path)
+        parser = BulbapediaParser()
+        specs = parser.get_image_specs(html, "Charmander")
+        assert len(specs) == 1
+        form_key, url = specs[0]
+        assert form_key is None
+        assert url is not None
+        assert "0004charmander" in url.lower()
+        assert "250px" in url or "500px" in url or "375px" in url
+
+
 class TestBulbapediaParserEdgeCases:
     def test_parse_empty_html_returns_empty_name(self):
         parser = BulbapediaParser()

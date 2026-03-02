@@ -55,11 +55,13 @@ async def fetch_one(
     except Exception as e:
         logger.error("%s: falha no parsing: %s", name, e)
         return None
-    image_url = parser.get_image_url(html, pokemon.name)
-    if image_url:
-        img_path = await downloader.download_async(image_url, pokemon)
-        if img_path:
-            pokemon = pokemon.model_copy(update={"image_path": img_path})
+    paths = await parser.extract_and_download_form_images(html, pokemon, downloader)
+    if paths:
+        first_path = paths[0][1]
+        form_paths = {k: v for k, v in paths if k} if len(paths) > 1 else None
+        pokemon = pokemon.model_copy(
+            update={"image_path": first_path, "form_image_paths": form_paths}
+        )
     return pokemon
 
 async def run_concurrent(

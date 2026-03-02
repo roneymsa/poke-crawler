@@ -3,16 +3,21 @@ Parsing do HTML da Bulbapedia com lxml e XPath.
 """
 
 import re
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from lxml import html, etree  # type: ignore[import-untyped]
 
 from crawler.domain.models import AbilityInfo, BaseStats, GenderRatio, Pokemon
 
+if TYPE_CHECKING:
+    from crawler.downloader import ImageDownloader
+
 BULBAPEDIA_IMAGE_BASE = "https://bulbapedia.bulbagarden.net"
 
 # XPath: tabelas infobox (roundy ou infobox no class)
 XPATH_INFOBOX_TABLES = '//table[contains(@class,"roundy") or contains(@class,"infobox")]'
+# Formas: span mw:File com a.mw-file-description e following-sibling small com a descrição da forma
+XPATH_FORM_IMAGE_SPANS = """.//tr/td/span[@typeof="mw:File"][a[@class="mw-file-description"]][following-sibling::small[normalize-space()]]"""
 # Nome: primeiro título da página
 XPATH_FIRST_HEADING = '//h1[@id="firstHeading"]'
 # Categoria: link com title "Pokémon category"
@@ -67,6 +72,14 @@ def _full_image_url(src: str) -> str:
     return BULBAPEDIA_IMAGE_BASE + src
 
 
+def _safe_form_key(label: str) -> str:
+    """Normaliza rótulo de forma para uso em nome de arquivo (ex.: 'Red-Striped Form' -> 'Red_Striped')."""
+    s = re.sub(r"\s+form\s*$", "", (label or "").strip(), flags=re.I)
+    s = re.sub(r"[^\w\s-]", "", s)
+    s = re.sub(r"[-\s]+", "_", s).strip("_")
+    return s or "default"
+
+
 def _dedupe_abilities(abilities: list[AbilityInfo]) -> list[AbilityInfo]:
     seen: set[tuple[str, bool]] = set()
     out: list[AbilityInfo] = []
@@ -118,10 +131,42 @@ class BulbapediaParser:
         )
 
     def get_image_url(self, html_content: str, pokemon_name: Optional[str] = None) -> Optional[str]:
-        """Extrai a URL da imagem principal do Pokémon a partir do HTML."""
+        """Extrai a URL da imagem principal do Pokémon (compatibilidade: retorna a primeira)."""
+        specs = self.get_image_specs(html_content, pokemon_name)
+        return specs[0][1] if specs else None
+
+    def get_image_specs(
+        self, html_content: str, pokemon_name: Optional[str] = None
+    ) -> list[tuple[Optional[str], str]]:
+        """
+        Extrai imagens do infobox: só usa tabela de formas quando há 2+ formas
+        (span mw:File + small com texto); senão fallback para uma imagem única.
+        Restringe à primeira tabela roundy/infobox (infobox principal), sem sair para outras.
+        Retorna [(form_key, url), ...].
+        """
         tree = html.fromstring(html_content)
-        infobox_tables = tree.xpath(XPATH_INFOBOX_TABLES)
-        return self._extract_image_url(infobox_tables, pokemon_name=pokemon_name)
+        all_infobox = tree.xpath(XPATH_INFOBOX_TABLES)
+        main_infobox = all_infobox[:1]  # só a primeira tabela (infobox principal)
+        form_specs = self._extract_form_image_specs_from_infobox(main_infobox)
+        # Só ativa extração por formas quando a página tem mais de uma forma (ex.: Basculin)
+        if len(form_specs) >= 2:
+            return form_specs
+        return self._extract_image_specs(main_infobox, pokemon_name=pokemon_name)
+
+    async def extract_and_download_form_images(
+        self,
+        html_content: str,
+        pokemon: Pokemon,
+        downloader: "ImageDownloader",
+    ) -> list[tuple[Optional[str], str]]:
+        """
+        Extrai specs de imagens (formas) e baixa cada uma; retorna [(form_key, path), ...].
+        O download é feito a partir do parser para centralizar a lógica de formas.
+        """
+        specs = self.get_image_specs(html_content, pokemon.name)
+        if not specs:
+            return []
+        return await downloader.download_forms_async(pokemon, specs)
 
     def _extract_name(self, tree: etree._Element, page_name: Optional[str]) -> str:
         nodes = tree.xpath(XPATH_FIRST_HEADING)
@@ -358,35 +403,91 @@ class BulbapediaParser:
                 return _dedupe_abilities(abilities)
         return []
 
-    def _image_matches_pokemon(self, img: etree._Element, name_norm: str) -> bool:
+    def _extract_form_image_specs_from_infobox(
+        self, infobox_tables: List[etree._Element]
+    ) -> list[tuple[Optional[str], str]]:
+        """
+        Extrai (form_key, url) a partir da tabela de formas: span[@typeof="mw:File"]
+        com a[@class="mw-file-description"] (img) e following-sibling::small (descrição).
+        Só retorna entradas com src permitido e small com texto.
+        """
+        seen: set[str] = set()
+        specs: list[tuple[Optional[str], str]] = []
+        for table in infobox_tables:
+            for span in table.xpath(XPATH_FORM_IMAGE_SPANS):
+                imgs = span.xpath('.//a[@class="mw-file-description"]/img/@src')
+                smalls = span.xpath("following-sibling::small[1]")
+                if not imgs:
+                    continue
+                src = (imgs[0] or "").strip()
+                if not src or not self._image_src_allowed(src):
+                    continue
+                form_label = _text(smalls[0]).strip() if smalls else ""
+                if not form_label or "{{{" in form_label:
+                    continue
+                if "form" not in form_label.lower():
+                    continue
+                form_key = _safe_form_key(form_label)
+                if form_key in seen:
+                    continue
+                seen.add(form_key)
+                url = _full_image_url(src)
+                specs.append((form_key, url))
+        if not specs:
+            return []
+        return specs
+
+    def _image_src_allowed(self, src: str) -> bool:
+        return bool(src and re.search(r"(archives|bulbagarden)", src, re.I))
+
+    def _image_matches_pokemon(
+        self, img: etree._Element, name_norm: str, src: Optional[str] = None
+    ) -> bool:
+        """True se a imagem pertence ao Pokémon (alt/title/parent ou nome no src)."""
         if not name_norm:
             return False
+        if src and name_norm in src.lower():
+            return True
         alt = (img.get("alt") or "").lower()
         title = (img.get("title") or "").lower()
         parent = img.xpath("./parent::a")
         parent_title = (parent[0].get("title") or "").lower() if parent else ""
         return name_norm in " ".join([alt, title, parent_title])
 
-    def _image_src_allowed(self, src: str) -> bool:
-        return bool(src and re.search(r"(archives|bulbagarden)", src, re.I))
+    def _image_src_is_main_artwork(self, src: str) -> bool:
+        """Exclui thumbnails pequenos e ícones (Candy, GO_, /20px-, /40px-, /96px-)."""
+        if not src:
+            return False
+        lower = src.lower()
+        if "candy" in lower or "/go_" in lower:
+            return False
+        if re.search(r"/\d+px-", src):
+            px = re.findall(r"/(\d+)px-", src)
+            if px and int(px[0]) < 100:
+                return False
+        return True
 
-    def _extract_image_url(
+    def _extract_image_specs(
         self, infobox_tables: List[etree._Element], pokemon_name: Optional[str] = None
-    ) -> Optional[str]:
+    ) -> list[tuple[Optional[str], str]]:
+        """
+        Fallback quando não há tabela de formas: retorna a primeira imagem do infobox
+        que pertence ao Pokémon (por alt/title ou nome no src), permitida e artwork principal.
+        """
         name_norm = pokemon_name.lower() if pokemon_name else None
         if not name_norm:
-            return None
+            return []
         for table in infobox_tables:
             for img in table.xpath(".//img[@src]"):
                 src = img.get("src") or ""
-                if not src:
+                if not src or not self._image_src_allowed(src):
                     continue
-                if not self._image_matches_pokemon(img, name_norm):
+                if not self._image_src_is_main_artwork(src):
                     continue
-                if not self._image_src_allowed(src):
+                if not self._image_matches_pokemon(img, name_norm, src=src):
                     continue
-                return _full_image_url(src)
-        return None
+                return [(None, _full_image_url(src))]
+        return []
 
     def _extract_gender_ratio(self, tree: etree._Element) -> Optional[GenderRatio]:
         tables = tree.xpath(XPATH_GENDER_TABLE)
