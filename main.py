@@ -158,6 +158,7 @@ def main() -> None:
         logger.info("Extraídos: %d Pokémon.", len(pokemons))
         logger.info("JSON: todos_pokemons.json")
         logger.info("SQLite: todos_pokemons.db")
+        logger.info("Imagens: %s", args.images)
         return
 
     names = list(args.names)
@@ -184,6 +185,7 @@ def main() -> None:
     if output_json:
         logger.info("JSON: %s", output_json)
     logger.info("SQLite: %s", args.db or "pokemon.db")
+    logger.info("Imagens: %s", args.images)
 
 
 if __name__ == "__main__":
