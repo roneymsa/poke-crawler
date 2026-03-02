@@ -79,10 +79,10 @@ async def run_concurrent(
         if resolved is None:
             resolved = []
             for n in names or []:
-                page_url = find_pokemon_page(n, client)
-                if page_url:
-                    resolved.append((n, page_url))
-                else:
+                matches = find_pokemon_page(n, client)
+                for display_name, page_url in matches:
+                    resolved.append((display_name, page_url))
+                if not matches:
                     logger.warning("'%s': não encontrado na Bulbapedia (será ignorado)", n)
 
         if not resolved:

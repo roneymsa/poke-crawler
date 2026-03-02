@@ -12,3 +12,4 @@ Pidgey
 Basculin
 NotFound
 Nidoran
+Lucari
