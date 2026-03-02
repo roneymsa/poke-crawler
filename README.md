@@ -37,7 +37,7 @@ poke-crawler/
 ## Requisitos
 
 - Python 3.10+
-- Dependências em `requirements.txt`: `httpx`, `beautifulsoup4`, `pydantic`, `tenacity`
+- Dependências em `requirements.txt`: `httpx`, `lxml`, `pydantic`, `tenacity`, `pytest`, `flake8`
 
 ## Como rodar
 
@@ -149,9 +149,13 @@ python main.py --list lista.txt --workers 5
 python main.py --list pokemon_names.txt --json dados.json --db dados.db --images img --workers 4
 ```
 
-### 3. Executar os testes
+### 3. Testes e lint (rodar local antes de enviar)
 
 ```bash
+# Lint (mesmo que o CI)
+flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
 # Todos os testes
 python -m pytest tests/ -v
 
