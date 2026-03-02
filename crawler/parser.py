@@ -26,8 +26,8 @@ XPATH_CATEGORY = '//a[@title="Pokémon category"]'
 XPATH_BASE_STATS_TABLE = '//span[@id="Base_stats"]/parent::h4/following-sibling::*[self::table][1]'
 # Evolution: div irmão seguinte do h3 que contém span#Evolution
 XPATH_EVOLUTION_DIV = '//span[@id="Evolution"]/parent::h3/following-sibling::div[1]'
-# Tabelas com "gender ratio" no texto
-XPATH_GENDER_TABLE = '//table[contains(., "gender ratio")]'
+# Tabelas com "gender ratio" no texto (case-insensitive: página tem "Gender ratio")
+XPATH_GENDER_TABLE = "//table[contains(translate(., 'G', 'g'), 'gender ratio')]"
 
 def _text(el) -> str:
     """Texto completo do elemento (incluindo descendentes), normalizado."""

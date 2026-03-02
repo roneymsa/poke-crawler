@@ -219,6 +219,12 @@ class TestBulbapediaParserWithFixture:
         assert pokemon.evolution_prev == "Pichu"
         assert pokemon.evolution_next == "Raichu"
 
+    def test_parse_extracts_gender_ratio(self, parser, html):
+        pokemon = parser.parse(html, page_name="Pikachu")
+        assert pokemon.gender_ratio is not None
+        assert pokemon.gender_ratio.male == 50.0
+        assert pokemon.gender_ratio.female == 50.0
+
     def test_get_image_url_without_matching_image_returns_none(self, parser, html):
         # O fixture atual não tem img com alt/title do Pokémon na URL bulbagarden
         url = parser.get_image_url(html, "Pikachu")
