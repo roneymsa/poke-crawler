@@ -80,13 +80,13 @@ class TestNormalizeType:
 
 class TestTdIsVisible:
     def test_no_style_is_visible(self):
-        from bs4 import BeautifulSoup
-        td = BeautifulSoup("<td>x</td>", "html.parser").find("td")
+        from lxml import html as lxml_html
+        td = lxml_html.fromstring("<td>x</td>")
         assert _td_is_visible(td) is True
 
     def test_display_none_is_hidden(self):
-        from bs4 import BeautifulSoup
-        td = BeautifulSoup('<td style="display:none">x</td>', "html.parser").find("td")
+        from lxml import html as lxml_html
+        td = lxml_html.fromstring('<td style="display:none">x</td>')
         assert _td_is_visible(td) is False
 
 
@@ -147,7 +147,6 @@ class TestDedupeAbilities:
 _ALL_FIXTURES = _all_bulbapedia_fixtures()
 BULBAPEDIA_FIXTURE_IDS = [(p, name) for p, name in _ALL_FIXTURES]
 FIXTURE_IDS_NAMES = [p.stem for p, _ in _ALL_FIXTURES]
-
 
 @pytest.mark.parametrize("fixture_path,expected_name_from_file", BULBAPEDIA_FIXTURE_IDS, ids=FIXTURE_IDS_NAMES)
 class TestBulbapediaParserEachFixture:

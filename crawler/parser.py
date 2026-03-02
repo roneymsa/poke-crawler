@@ -1,12 +1,35 @@
-"""Parsing do HTML da Bulbapedia com BeautifulSoup."""
+"""
+Parsing do HTML da Bulbapedia com lxml e XPath.
+"""
 
 import re
-from typing import Optional
-from bs4 import BeautifulSoup
+from typing import List, Optional
+
+from lxml import html, etree  # type: ignore[import-untyped]
 
 from crawler.domain.models import AbilityInfo, BaseStats, GenderRatio, Pokemon
 
 BULBAPEDIA_IMAGE_BASE = "https://bulbapedia.bulbagarden.net"
+
+# XPath: tabelas infobox (roundy ou infobox no class)
+XPATH_INFOBOX_TABLES = '//table[contains(@class,"roundy") or contains(@class,"infobox")]'
+# Nome: primeiro título da página
+XPATH_FIRST_HEADING = '//h1[@id="firstHeading"]'
+# Categoria: link com title "Pokémon category"
+XPATH_CATEGORY = '//a[@title="Pokémon category"]'
+# Base stats: tabela imediatamente após o h4 que contém span#Base_stats
+XPATH_BASE_STATS_TABLE = '//span[@id="Base_stats"]/parent::h4/following-sibling::*[self::table][1]'
+# Evolution: div irmão seguinte do h3 que contém span#Evolution
+XPATH_EVOLUTION_DIV = '//span[@id="Evolution"]/parent::h3/following-sibling::div[1]'
+# Tabelas com "gender ratio" no texto
+XPATH_GENDER_TABLE = '//table[contains(., "gender ratio")]'
+
+def _text(el) -> str:
+    """Texto completo do elemento (incluindo descendentes), normalizado."""
+    if el is None:
+        return ""
+    return (el.text_content() or "").strip()
+
 
 def _safe_int(value: Optional[str]) -> Optional[int]:
     if value is None:
@@ -26,22 +49,15 @@ def _normalize_type(s: str) -> str:
 
 
 def _td_is_visible(td) -> bool:
-    """True se o td não está oculto por display:none."""
     style = (td.get("style") or "").replace(" ", "").lower()
     return "display:none" not in style
 
 
 def _is_valid_ability_name(name: str) -> bool:
-    """Filtra rótulos que não são nomes de habilidade."""
-    return bool(name) and name.lower() not in {
-        "ability",
-        "abilities",
-        "hidden ability",
-    }
+    return bool(name) and name.lower() not in {"ability", "abilities", "hidden ability"}
 
 
 def _full_image_url(src: str) -> str:
-    """Converte src de imagem (relativo ou absoluto) em URL absoluta."""
     if not src:
         return ""
     if src.startswith("//"):
@@ -52,7 +68,6 @@ def _full_image_url(src: str) -> str:
 
 
 def _dedupe_abilities(abilities: list[AbilityInfo]) -> list[AbilityInfo]:
-    """Remove duplicatas por (name, is_hidden) mantendo a ordem."""
     seen: set[tuple[str, bool]] = set()
     out: list[AbilityInfo] = []
     for a in abilities:
@@ -75,19 +90,19 @@ STAT_MAP = {
 }
 
 class BulbapediaParser:
-    def parse(self, html: str, page_name: Optional[str] = None) -> Pokemon:
-        soup = BeautifulSoup(html, "html.parser")
+    """Parser da Bulbapedia usando lxml e XPath."""
 
-        name = self._extract_name(soup, page_name)
-        national_dex_number = self._extract_national_dex(soup)
-        category = self._extract_category(soup)
-        types = self._extract_types(soup)
-        base_stats = self._extract_base_stats(soup)
-        abilities = self._extract_abilities(soup)
-        evolution_prev, evolution_next = self._extract_evolutions(
-            soup, current_name=name
-        )
-        gender_ratio = self._extract_gender_ratio(soup)
+    def parse(self, html_content: str, page_name: Optional[str] = None) -> Pokemon:
+        tree = html.fromstring(html_content)
+        infobox_tables = tree.xpath(XPATH_INFOBOX_TABLES)
+        name = self._extract_name(tree, page_name)
+        national_dex_number = self._extract_national_dex(infobox_tables)
+        category = self._extract_category(tree)
+        types = self._extract_types(infobox_tables)
+        base_stats = self._extract_base_stats(tree)
+        abilities = self._extract_abilities(tree, infobox_tables)
+        evolution_prev, evolution_next = self._extract_evolutions(tree, current_name=name)
+        gender_ratio = self._extract_gender_ratio(tree)
 
         return Pokemon(
             name=name,
@@ -102,136 +117,91 @@ class BulbapediaParser:
             gender_ratio=gender_ratio,
         )
 
-    def get_image_url(self, html: str, pokemon_name: Optional[str] = None) -> Optional[str]:
+    def get_image_url(self, html_content: str, pokemon_name: Optional[str] = None) -> Optional[str]:
         """Extrai a URL da imagem principal do Pokémon a partir do HTML."""
-        soup = BeautifulSoup(html, "html.parser")
-        return self._extract_image_url(soup, pokemon_name=pokemon_name)
+        tree = html.fromstring(html_content)
+        infobox_tables = tree.xpath(XPATH_INFOBOX_TABLES)
+        return self._extract_image_url(infobox_tables, pokemon_name=pokemon_name)
 
-    def _extract_name(self, soup: BeautifulSoup, page_name: Optional[str]) -> str:
-        first_heading = soup.find("h1", id="firstHeading")
-        if not first_heading:
+    def _extract_name(self, tree: etree._Element, page_name: Optional[str]) -> str:
+        nodes = tree.xpath(XPATH_FIRST_HEADING)
+        if not nodes:
             return ""
-        text = first_heading.get_text(strip=True)
+        text = _text(nodes[0])
         return re.sub(r"\s*\([^)]*\)\s*$", "", text).strip()
 
-    def _find_infobox_tables(self, soup: BeautifulSoup):
-        return soup.find_all(
-            "table",
-            class_=re.compile(r"roundy|infobox", re.I),
-        )
-
-    def _dex_from_infobox_row(self, row) -> Optional[int]:
-        """Extrai o número do National Dex de uma linha (tr) da infobox, se existir."""
-        cells = row.find_all(["th", "td"])
-        for i, cell in enumerate(cells):
-            text = cell.get_text(strip=True)
-            match = re.search(r"#?\s*(\d{3,4})\s*$", text)
-            if match:
-                return _safe_int(match.group(1))
-            if (
-                "national" in text.lower()
-                and "dex" in text.lower()
-                and i + 1 < len(cells)
-            ):
-                return _safe_int(cells[i + 1].get_text(strip=True))
+    def _extract_national_dex(self, infobox_tables: List[etree._Element]) -> Optional[int]:
+        for table in infobox_tables:
+            for row in table.xpath(".//tr"):
+                cells = row.xpath("./th | ./td")
+                for i, cell in enumerate(cells):
+                    text = _text(cell)
+                    match = re.search(r"#?\s*(\d{3,4})\s*$", text)
+                    if match:
+                        return _safe_int(match.group(1))
+                    if "national" in text.lower() and "dex" in text.lower() and i + 1 < len(cells):
+                        return _safe_int(_text(cells[i + 1]))
         return None
 
-    def _find_dex_in_infobox(self, soup: BeautifulSoup) -> Optional[int]:
-        for table in self._find_infobox_tables(soup):
-            for row in table.find_all("tr"):
-                dex = self._dex_from_infobox_row(row)
-                if dex is not None:
-                    return dex
-        return None
-
-    def _extract_national_dex(self, soup: BeautifulSoup) -> Optional[int]:
-        return self._find_dex_in_infobox(soup)
-
-    def _extract_category(self, soup: BeautifulSoup) -> Optional[str]:
-        a = soup.find("a", title="Pokémon category")
-        if not a:
+    def _extract_category(self, tree: etree._Element) -> Optional[str]:
+        nodes = tree.xpath(XPATH_CATEGORY)
+        if not nodes:
             return None
-        return a.get_text(strip=True) or None
+        t = _text(nodes[0])
+        return t or None
 
-    def _extract_types(self, soup: BeautifulSoup) -> list[str]:
-        types: list[str] = []
-        type_link = soup.find("a", title="Type")
-        if not type_link:
-            return []
-        section_td = type_link.find_parent("td")
-        if not section_td:
-            return []
-        style_hidden = "display:none"
-        for td in section_td.find_all("td"):
-            style = (td.get("style") or "").replace(" ", "").lower()
-            if style_hidden in style:
+    def _extract_types(self, infobox_tables: List[etree._Element]) -> list[str]:
+        for table in infobox_tables:
+            type_anchors = table.xpath('.//a[@title="Type"]')
+            if not type_anchors:
                 continue
-            for a in td.find_all("a", href=re.compile(r"\(type\)", re.I)):
-                span = a.find("span")
-                b = span.find("b") if span else None
-                name = (b.get_text(strip=True) if b else a.get_text(strip=True))
-                if not name:
+            ancestors = type_anchors[0].xpath("./ancestor::td")
+            if not ancestors:
+                continue
+            section_td = ancestors[0]
+            types: list[str] = []
+            for td in section_td.xpath(".//td"):
+                if not _td_is_visible(td):
                     continue
-                t = _normalize_type(name)
-                if t and t not in types and t.lower() != "unknown":
-                    types.append(t)
-        return types[:2]
+                for a in td.xpath('.//a[contains(@href,"(type)") or contains(@href,"(Type)")]'):
+                    b = a.xpath("./span/b")
+                    name = _text(b[0]) if b else _text(a)
+                    if not name:
+                        continue
+                    t = _normalize_type(name)
+                    if t and t not in types and t.lower() != "unknown":
+                        types.append(t)
+            if types:
+                return types[:2]
+        return []
 
-    def _find_base_stats_table(self, soup: BeautifulSoup):
-        """Localiza a tabela de Base stats (span#Base_stats → h4 → próxima table)."""
-        span = soup.find("span", id="Base_stats")
-        if not span:
-            return None
-        h4 = span.find_parent("h4")
-        if not h4:
-            return None
-        return h4.find_next("table")
-
-    def _normalize_stat_name(self, name: str) -> Optional[str]:
-        """Retorna a chave do stat no nosso schema (hp, attack, ...) ou None."""
-        if not name:
-            return None
-        normalized = name.replace(":", "").strip().lower()
-        return STAT_MAP.get(normalized)
-
-    def _parse_stat_row(self, row) -> Optional[tuple[str, int]]:
-        """Extrai (key, value) de uma tr da tabela de base stats, ou None se inválida."""
-        th = row.find("th")
-        if not th:
-            return None
-        divs = th.find_all("div", recursive=False)
-        if len(divs) != 2:
-            return None
-        stat_name = divs[0].get_text(strip=True)
-        stat_value = divs[1].get_text(strip=True)
-        key = self._normalize_stat_name(stat_name)
-        if not key:
-            return None
-        val = _safe_int(stat_value)
-        if val is None or not (0 <= val <= 255):
-            return None
-        return (key, val)
-
-    def _extract_base_stats(self, soup: BeautifulSoup) -> BaseStats:
-        """
-        Extrai base stats da seção Base stats: span#Base_stats → h4 → próxima tabela.
-        Em cada tr, th com 2 divs (recursive=False): primeiro = nome do stat, segundo = valor.
-        """
+    def _extract_base_stats(self, tree: etree._Element) -> BaseStats:
+        tables = tree.xpath(XPATH_BASE_STATS_TABLE)
         stats: dict[str, int] = {}
-        table = self._find_base_stats_table(soup)
-        if not table:
+        if not tables:
             return self._base_stats_from_map(stats)
-        for row in table.find_all("tr"):
-            parsed = self._parse_stat_row(row)
-            if parsed:
-                key, val = parsed
-                stats[key] = val
+        table = tables[0]
+        for row in table.xpath(".//tr"):
+            th = row.xpath("./th")
+            if not th:
+                continue
+            divs = th[0].xpath("./div")
+            if len(divs) < 2:
+                continue
+            stat_name = _text(divs[0]).replace(":", "").strip().lower()
+            stat_value = _text(divs[1])
+            key = STAT_MAP.get(stat_name)
+            if not key:
+                continue
+            val = _safe_int(stat_value)
+            if val is None or not (0 <= val <= 255):
+                continue
+            stats[key] = val
             if len(stats) == 6:
                 break
         return self._base_stats_from_map(stats)
 
     def _base_stats_from_map(self, stats: dict[str, int]) -> BaseStats:
-        """Monta BaseStats a partir do dicionário (usa 0 para chaves ausentes)."""
         return BaseStats(
             hp=stats.get("hp", 0),
             attack=stats.get("attack", 0),
@@ -241,55 +211,37 @@ class BulbapediaParser:
             speed=stats.get("speed", 0),
         )
 
-    def _find_evolution_div(self, soup: BeautifulSoup):
-        """Retorna a div da seção Evolution (primeiro irmão div do h3#Evolution) ou None."""
-        evolution_span = soup.find("span", id="Evolution")
-        if not evolution_span:
-            return None
-        h3 = evolution_span.find_parent("h3")
-        if not h3:
-            return None
-        return h3.find_next_sibling("div")
-
-    def _evolution_table_has_stage_and_link(self, table) -> bool:
-        """True se a tabela tem stage (Unevolved/First Evolution/...) e link de Pokémon."""
+    def _evolution_table_has_stage_and_link(self, table: etree._Element) -> bool:
         link_re = re.compile(r"_\(Pok", re.I)
-        stage_re = re.compile(
-            r"^(Unevolved|First Evolution|Second Evolution)$", re.I
-        )
-        has_link = table.find("a", href=link_re) or table.find(
-            "a", class_=re.compile(r"selflink", re.I)
-        )
+        stage_re = re.compile(r"^(Unevolved|First Evolution|Second Evolution)$", re.I)
+        has_link = table.xpath('.//a[contains(@href,"(Pok") or contains(@class,"selflink")]') or []
         if not has_link:
             return False
-        return any(
-            stage_re.match(s.get_text(strip=True))
-            for s in table.find_all("small")
-        )
+        for s in table.xpath(".//small"):
+            if stage_re.match(_text(s)):
+                return True
+        return False
 
-    def _find_valid_evolution_tables(self, evolution_div):
-        """Retorna apenas tabelas de evolução válidas (com stage+link, sem nested válidas)."""
-        if not evolution_div:
+    def _find_valid_evolution_tables(self, evolution_div: Optional[etree._Element]) -> list:
+        if evolution_div is None:
             return []
         result = []
-        for table in evolution_div.find_all("table"):
+        for table in evolution_div.xpath(".//table"):
             if not self._evolution_table_has_stage_and_link(table):
                 continue
-            if any(
+            nested_valid = any(
                 self._evolution_table_has_stage_and_link(t)
-                for t in table.find_all("table")
-            ):
+                for t in table.xpath(".//table")
+            )
+            if nested_valid:
                 continue
             result.append(table)
         return result
 
-    def _extract_form_name(self, table) -> Optional[str]:
-        """Extrai o nome da forma (ex. Alolan) de um small 'X Form' na tabela, se houver."""
-        stage_re = re.compile(
-            r"^(Unevolved|First Evolution|Second Evolution)$", re.I
-        )
-        for form_s in table.find_all("small"):
-            text = form_s.get_text(strip=True)
+    def _extract_form_name(self, table: etree._Element) -> Optional[str]:
+        stage_re = re.compile(r"^(Unevolved|First Evolution|Second Evolution)$", re.I)
+        for s in table.xpath(".//small"):
+            text = _text(s)
             if stage_re.match(text):
                 continue
             if text and "Form" in text:
@@ -298,25 +250,19 @@ class BulbapediaParser:
                     return form_name
         return None
 
-    def _parse_evolution_table(self, table) -> Optional[str]:
-        """Extrai o nome do Pokémon (com forma, se houver) de uma tabela de evolução."""
-        link_re = re.compile(r"_\(Pok", re.I)
-        stage_re = re.compile(
-            r"^(Unevolved|First Evolution|Second Evolution)$", re.I
-        )
+    def _parse_evolution_table(self, table: etree._Element) -> Optional[str]:
+        stage_re = re.compile(r"^(Unevolved|First Evolution|Second Evolution)$", re.I)
         stage_small = None
-        for s in table.find_all("small"):
-            if stage_re.match(s.get_text(strip=True)):
+        for s in table.xpath(".//small"):
+            if stage_re.match(_text(s)):
                 stage_small = s
                 break
-        if not stage_small:
+        if stage_small is None:
             return None
-        a = table.find("a", href=link_re) or table.find(
-            "a", class_=re.compile(r"selflink", re.I)
-        )
-        if not a:
+        a_nodes = table.xpath('.//a[contains(@href,"(Pok") or contains(@class,"selflink")]')
+        if not a_nodes:
             return None
-        name = a.get_text(strip=True)
+        name = _text(a_nodes[0])
         if not name or name in ("→", "←", "↗", "↘"):
             return None
         form_name = self._extract_form_name(table)
@@ -324,7 +270,7 @@ class BulbapediaParser:
             name = f"{name} ({form_name})"
         return name
 
-    def _extract_evolution_chain(self, evolution_div) -> list[str]:
+    def _extract_evolution_chain(self, evolution_div: Optional[etree._Element]) -> list[str]:
         tables = self._find_valid_evolution_tables(evolution_div)
         chain: list[str] = []
         for table in tables:
@@ -336,7 +282,6 @@ class BulbapediaParser:
     def _resolve_prev_next(
         self, chain: list[str], current_name: Optional[str]
     ) -> tuple[Optional[str], Optional[str]]:
-        """Dada a cadeia evolutiva e o nome do Pokémon atual, retorna (prev, next)."""
         if not chain:
             return (None, None)
         prev_name: Optional[str] = None
@@ -355,29 +300,29 @@ class BulbapediaParser:
         if idx > 0:
             prev_name = chain[idx - 1]
         if idx + 1 < len(chain):
-            next_name = chain[idx + 1]  # apenas a primeira evolução seguinte
+            next_name = chain[idx + 1]
         return (prev_name, next_name)
 
     def _extract_evolutions(
-        self, soup: BeautifulSoup, current_name: Optional[str] = None
+        self, tree: etree._Element, current_name: Optional[str] = None
     ) -> tuple[Optional[str], Optional[str]]:
-        div = self._find_evolution_div(soup)
-        chain = self._extract_evolution_chain(div) if div else []
+        divs = tree.xpath(XPATH_EVOLUTION_DIV)
+        div = divs[0] if divs else None
+        chain = self._extract_evolution_chain(div) if div is not None else []
         return self._resolve_prev_next(chain, current_name)
 
-    def _extract_abilities_from_td(self, td) -> list[AbilityInfo]:
-        """Extrai habilidades de um único <td> (pode retornar várias)."""
+    def _extract_abilities_from_td(self, td: etree._Element) -> list[AbilityInfo]:
         if not _td_is_visible(td):
             return []
-        text = td.get_text(" ", strip=True)
+        text = _text(td)
         if not text:
             return []
         hidden = "hidden ability" in text.lower()
         result: list[AbilityInfo] = []
-        links = td.find_all("a")
+        links = td.xpath(".//a")
         if links:
             for a in links:
-                name = a.get_text(strip=True)
+                name = _text(a)
                 if _is_valid_ability_name(name):
                     result.append(AbilityInfo(name=name, is_hidden=hidden))
         else:
@@ -387,70 +332,52 @@ class BulbapediaParser:
                     result.append(AbilityInfo(name=part, is_hidden=False))
         return result
 
-    def _find_abilities_by_infobox_header(self, soup: BeautifulSoup) -> list[AbilityInfo]:
-        """Busca habilidades na infobox pela linha com header 'ability'."""
-        for table in self._find_infobox_tables(soup):
-            for row in table.find_all("tr"):
-                th = row.find("th")
-                if not th or "ability" not in th.get_text(strip=True).lower():
+    def _extract_abilities(self, tree: etree._Element, infobox_tables: List[etree._Element]) -> list[AbilityInfo]:
+        for table in infobox_tables:
+            for row in table.xpath(".//tr"):
+                th_list = row.xpath("./th")
+                if not th_list or "ability" not in _text(th_list[0]).lower():
                     continue
                 abilities: list[AbilityInfo] = []
-                for td in row.find_all("td"):
+                for td in row.xpath("./td"):
                     abilities.extend(self._extract_abilities_from_td(td))
                 if abilities:
-                    return abilities
-        return []
-
-    def _find_abilities_by_next_table(self, soup: BeautifulSoup) -> list[AbilityInfo]:
-        """Busca habilidades na tabela seguinte a uma célula com 'abilities'."""
-        for cell in soup.find_all(["th", "td"]):
-            if "abilities" not in cell.get_text(strip=True).lower():
+                    return _dedupe_abilities(abilities)
+        for cell in tree.xpath("//th | //td"):
+            if "abilities" not in _text(cell).lower():
                 continue
-            table = cell.find_next(
-                "table", class_=re.compile(r"roundy|infobox", re.I)
+            tables = cell.xpath(
+                './/table[contains(@class,"roundy") or contains(@class,"infobox")][1]'
             )
-            if not table:
+            if not tables:
                 continue
-            abilities: list[AbilityInfo] = []
-            for td in table.find_all("td"):
+            abilities = []
+            for td in tables[0].xpath(".//td"):
                 abilities.extend(self._extract_abilities_from_td(td))
-            if abilities:
-                return abilities
-        return []
-
-    def _extract_abilities(self, soup: BeautifulSoup) -> list[AbilityInfo]:
-        """Extrai habilidades tentando infobox por header e depois por próxima tabela."""
-        for finder in (
-            self._find_abilities_by_infobox_header,
-            self._find_abilities_by_next_table,
-        ):
-            abilities = finder(soup)
             if abilities:
                 return _dedupe_abilities(abilities)
         return []
 
-    def _image_matches_pokemon(self, img, name_norm: str) -> bool:
-        """True se alt/title do img ou do link pai contêm o nome do Pokémon."""
+    def _image_matches_pokemon(self, img: etree._Element, name_norm: str) -> bool:
         if not name_norm:
             return False
         alt = (img.get("alt") or "").lower()
         title = (img.get("title") or "").lower()
-        parent = img.find_parent("a")
-        parent_title = (parent.get("title") or "").lower() if parent else ""
-        text_blob = " ".join([alt, title, parent_title])
-        return name_norm in text_blob
+        parent = img.xpath("./parent::a")
+        parent_title = (parent[0].get("title") or "").lower() if parent else ""
+        return name_norm in " ".join([alt, title, parent_title])
 
     def _image_src_allowed(self, src: str) -> bool:
-        """True se o src é de domínio permitido (archives/bulbagarden)."""
         return bool(src and re.search(r"(archives|bulbagarden)", src, re.I))
 
-    def _extract_image_url(self, soup: BeautifulSoup, pokemon_name: Optional[str] = None) -> Optional[str]:
-        """Extrai a URL da imagem principal do Pokémon na infobox."""
+    def _extract_image_url(
+        self, infobox_tables: List[etree._Element], pokemon_name: Optional[str] = None
+    ) -> Optional[str]:
         name_norm = pokemon_name.lower() if pokemon_name else None
         if not name_norm:
             return None
-        for table in self._find_infobox_tables(soup):
-            for img in table.find_all("img"):
+        for table in infobox_tables:
+            for img in table.xpath(".//img[@src]"):
                 src = img.get("src") or ""
                 if not src:
                     continue
@@ -461,17 +388,11 @@ class BulbapediaParser:
                 return _full_image_url(src)
         return None
 
-    def _extract_gender_ratio(self, soup: BeautifulSoup) -> Optional[GenderRatio]:
-        """Extrai a proporção de gênero (percentuais float) do Pokémon na infobox."""
-        gender_table = None
-        for table in soup.find_all("table"):
-            text = table.get_text(" ", strip=True).lower()
-            if "gender ratio" in text:
-                gender_table = table
-                break
-
-        if not gender_table:
+    def _extract_gender_ratio(self, tree: etree._Element) -> Optional[GenderRatio]:
+        tables = tree.xpath(XPATH_GENDER_TABLE)
+        if not tables:
             return None
+        gender_table = tables[0]
 
         def parse_percent(raw: str) -> Optional[float]:
             if not raw:
@@ -486,8 +407,8 @@ class BulbapediaParser:
 
         male_pct: Optional[float] = None
         female_pct: Optional[float] = None
-        for span in gender_table.find_all("span"):
-            text = span.get_text(strip=True)
+        for span in gender_table.xpath(".//span"):
+            text = _text(span)
             if not text or "%" not in text:
                 continue
             lower = text.lower()
