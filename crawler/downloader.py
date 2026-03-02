@@ -17,6 +17,9 @@ IMAGE_HEADERS = {
     "Referer": "https://bulbapedia.bulbagarden.net/",
 }
 
+# Símbolos de gênero: preservar no nome do arquivo para Nidoran♂ vs Nidoran♀
+MALE_SYMBOL, FEMALE_SYMBOL = "\u2642", "\u2640"
+
 def _extension_from_content_type(content_type: str) -> str:
     """Retorna extensão baseada no Content-Type (ex.: image/png → .png)."""
     content_type = (content_type or "").lower().split(";")[0].strip()
@@ -42,7 +45,9 @@ class ImageDownloader:
         self._client = client
 
     def _safe_filename(self, name: str) -> str:
-        s = re.sub(r"[^\w\s-]", "", name)
+        # Preservar variantes Nidoran♂ / Nidoran♀ em nomes distintos (evitar sobrescrever)
+        s = name.replace(MALE_SYMBOL, "_male").replace(FEMALE_SYMBOL, "_female")
+        s = re.sub(r"[^\w\s-]", "", s)
         s = re.sub(r"[-\s]+", "_", s).strip("_")
         return s or "unknown"
 

@@ -147,7 +147,6 @@ class TestDedupeAbilities:
 _ALL_FIXTURES = _all_bulbapedia_fixtures()
 BULBAPEDIA_FIXTURE_IDS = [(p, name) for p, name in _ALL_FIXTURES]
 FIXTURE_IDS_NAMES = [p.stem for p, _ in _ALL_FIXTURES]
-
 @pytest.mark.parametrize("fixture_path,expected_name_from_file", BULBAPEDIA_FIXTURE_IDS, ids=FIXTURE_IDS_NAMES)
 class TestBulbapediaParserEachFixture:
     """Testes que rodam com cada fixture em tests/fixtures/bulbapedia_*.html."""
@@ -171,7 +170,6 @@ class TestBulbapediaParserEachFixture:
         pokemon = parser.parse(html)
         assert pokemon.base_stats is not None
         assert isinstance(pokemon.base_stats, BaseStats)
-
 
 class TestBulbapediaParserWithFixture:
     """Testes com valores exatos usando tests/fixtures/bulbapedia_pikachu.html."""
@@ -227,6 +225,60 @@ class TestBulbapediaParserWithFixture:
         # Pode ser None se não houver img que bata com o nome e archives/bulbagarden
         assert url is None or "bulbagarden" in url or "archives" in url
 
+class TestBulbapediaParserNidoran:
+    """Testes específicos para coleta de Nidoran♀ e Nidoran♂ (duas páginas distintas)."""
+
+    @pytest.fixture
+    def parser(self):
+        return BulbapediaParser()
+
+    def test_nidoran_female_parse(self, parser):
+        """Nidoran♀: nome, dex, categoria, tipos, stats e evolução extraídos do fixture."""
+        path = FIXTURES_DIR / "bulbapedia_nidoran♀.html"
+        html = _load_fixture_html(path)
+        pokemon = parser.parse(html, page_name="Nidoran♀")
+        assert pokemon.name == "Nidoran♀"
+        assert pokemon.national_dex_number == 29
+        assert pokemon.category == "Poison Pin Pokémon"
+        assert "Poison" in pokemon.types
+        assert pokemon.base_stats.hp == 55
+        assert pokemon.base_stats.attack == 47
+        assert pokemon.base_stats.defense == 52
+        assert pokemon.base_stats.speed == 41
+        assert pokemon.evolution_next == "Nidorina"
+        ability_names = [a.name for a in pokemon.abilities]
+        assert "Poison Point" in ability_names
+        assert "Rivalry" in ability_names
+
+    def test_nidoran_male_parse(self, parser):
+        """Nidoran♂: nome, dex, categoria, tipos, stats e evolução extraídos do fixture."""
+        path = FIXTURES_DIR / "bulbapedia_nidoran♂.html"
+        html = _load_fixture_html(path)
+        pokemon = parser.parse(html, page_name="Nidoran♂")
+        assert pokemon.name == "Nidoran♂"
+        assert pokemon.national_dex_number == 32
+        assert pokemon.category == "Poison Pin Pokémon"
+        assert "Poison" in pokemon.types
+        assert pokemon.base_stats.hp == 46
+        assert pokemon.base_stats.attack == 57
+        assert pokemon.base_stats.defense == 40
+        assert pokemon.base_stats.speed == 50
+        assert pokemon.evolution_next == "Nidorino"
+        ability_names = [a.name for a in pokemon.abilities]
+        assert "Poison Point" in ability_names
+        assert "Rivalry" in ability_names
+
+    def test_nidoran_female_and_male_are_different(self, parser):
+        """Garante que Nidoran♀ e Nidoran♂ produzem dados distintos (dex, stats)."""
+        html_f = _load_fixture_html(FIXTURES_DIR / "bulbapedia_nidoran♀.html")
+        html_m = _load_fixture_html(FIXTURES_DIR / "bulbapedia_nidoran♂.html")
+        p_f = parser.parse(html_f, page_name="Nidoran♀")
+        p_m = parser.parse(html_m, page_name="Nidoran♂")
+        assert p_f.name != p_m.name
+        assert p_f.national_dex_number == 29
+        assert p_m.national_dex_number == 32
+        assert p_f.base_stats.hp == 55 and p_m.base_stats.hp == 46
+        assert p_f.evolution_next == "Nidorina" and p_m.evolution_next == "Nidorino"
 
 class TestBulbapediaParserEdgeCases:
     def test_parse_empty_html_returns_empty_name(self):
