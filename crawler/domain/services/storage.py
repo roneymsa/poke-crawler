@@ -61,23 +61,54 @@ class Storage:
         """)
         conn.commit()
 
-    def save_sqlite(self, pokemons: List[Pokemon]) -> None:
-        """Persiste a lista de Pokémon no SQLite (upsert por nome canônico)."""
-        pokemons = _deduplicate_by_name(pokemons)
-        Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
-        conn = sqlite3.connect(self.db_path)
-        try:
-            self._ensure_schema(conn)
-            for p in pokemons:
-                abilities_json = json.dumps([
-                    {"name": a.name, "is_hidden": a.is_hidden}
-                    for a in p.abilities
-                ], ensure_ascii=False)
-                gender_ratio_json = (
-                    json.dumps(p.gender_ratio.model_dump(mode="json"), ensure_ascii=False)
-                    if p.gender_ratio else None
-                )
-                row = (
+    def _upsert_one(self, conn: sqlite3.Connection, p: Pokemon) -> None:
+        """Faz upsert de um único Pokémon na conexão já aberta."""
+        abilities_json = json.dumps(
+            [{"name": a.name, "is_hidden": a.is_hidden} for a in p.abilities],
+            ensure_ascii=False,
+        )
+        gender_ratio_json = (
+            json.dumps(p.gender_ratio.model_dump(mode="json"), ensure_ascii=False)
+            if p.gender_ratio else None
+        )
+        row = (
+            p.national_dex_number,
+            p.category,
+            json.dumps(p.types, ensure_ascii=False),
+            p.base_stats.hp,
+            p.base_stats.attack,
+            p.base_stats.defense,
+            p.base_stats.sp_atk,
+            p.base_stats.sp_def,
+            p.base_stats.speed,
+            p.evolution_prev,
+            p.evolution_next,
+            abilities_json,
+            p.image_path,
+            gender_ratio_json,
+            p.name,
+        )
+        cur = conn.execute(
+            """
+            UPDATE pokemon SET
+                national_dex_number = ?, category = ?, types = ?,
+                hp = ?, attack = ?, defense = ?, sp_atk = ?, sp_def = ?, speed = ?,
+                evolution_prev = ?, evolution_next = ?, abilities = ?, image_path = ?, gender_ratio = ?
+            WHERE name = ?
+            """,
+            row,
+        )
+        if cur.rowcount == 0:
+            conn.execute(
+                """
+                INSERT INTO pokemon (
+                    name, national_dex_number, category, types,
+                    hp, attack, defense, sp_atk, sp_def, speed,
+                    evolution_prev, evolution_next, abilities, image_path, gender_ratio
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    p.name,
                     p.national_dex_number,
                     p.category,
                     json.dumps(p.types, ensure_ascii=False),
@@ -92,48 +123,37 @@ class Storage:
                     abilities_json,
                     p.image_path,
                     gender_ratio_json,
-                    p.name,
-                )
-                cur = conn.execute(
-                    """
-                    UPDATE pokemon SET
-                        national_dex_number = ?, category = ?, types = ?,
-                        hp = ?, attack = ?, defense = ?, sp_atk = ?, sp_def = ?, speed = ?,
-                        evolution_prev = ?, evolution_next = ?, abilities = ?, image_path = ?, gender_ratio = ?
-                    WHERE name = ?
-                    """,
-                    row,
-                )
-                if cur.rowcount == 0:
-                    conn.execute(
-                        """
-                        INSERT INTO pokemon (
-                            name, national_dex_number, category, types,
-                            hp, attack, defense, sp_atk, sp_def, speed,
-                            evolution_prev, evolution_next, abilities, image_path, gender_ratio
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        """,
-                        (
-                            p.name,
-                            p.national_dex_number,
-                            p.category,
-                            json.dumps(p.types, ensure_ascii=False),
-                            p.base_stats.hp,
-                            p.base_stats.attack,
-                            p.base_stats.defense,
-                            p.base_stats.sp_atk,
-                            p.base_stats.sp_def,
-                            p.base_stats.speed,
-                            p.evolution_prev,
-                            p.evolution_next,
-                            abilities_json,
-                            p.image_path,
-                            gender_ratio_json,
-                        ),
-                    )
+                ),
+            )
+
+    def save_one_sqlite(self, pokemon: Pokemon) -> None:
+        """Persiste um único Pokémon no SQLite (upsert por nome). Chamado a cada parse."""
+        Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
+        conn = sqlite3.connect(self.db_path)
+        try:
+            self._ensure_schema(conn)
+            self._upsert_one(conn, pokemon)
             conn.commit()
         finally:
             conn.close()
+
+    def save_sqlite(self, pokemons: List[Pokemon]) -> None:
+        """Persiste a lista de Pokémon no SQLite (upsert por nome canônico)."""
+        pokemons = _deduplicate_by_name(pokemons)
+        Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
+        conn = sqlite3.connect(self.db_path)
+        try:
+            self._ensure_schema(conn)
+            for p in pokemons:
+                self._upsert_one(conn, p)
+            conn.commit()
+        finally:
+            conn.close()
+
+    def export_json_from_db(self, path: str = "pokemon.json") -> None:
+        """Exporta para JSON os Pokémon que estão no SQLite (busca os nomes salvos no banco)."""
+        pokemons = self.load_sqlite()
+        self.save_json(pokemons, path)
 
     def load_sqlite(self) -> List[Pokemon]:
         """Carrega todos os Pokémon do SQLite."""

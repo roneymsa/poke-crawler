@@ -89,21 +89,26 @@ async def run_concurrent(
             logger.warning("Nenhum Pokémon para processar.")
             return []
 
+        db_path = output_db or "pokemon.db"
+        storage = Storage(db_path=db_path)
+
         async def _bounded_fetch(name: str, page_url: str) -> Pokemon | None:
             async with semaphore:
-                return await fetch_one(client, parser, downloader, name, page_url)
+                pokemon = await fetch_one(client, parser, downloader, name, page_url)
+                if pokemon is not None:
+                    storage.save_one_sqlite(pokemon)
+                return pokemon
 
         downloader = ImageDownloader(images_dir=images_dir, client=client)
         tasks = [_bounded_fetch(n, url) for n, url in resolved]
-        results = await asyncio.gather(*tasks, return_exceptions=False)
-        pokemons = [p for p in results if p is not None]
+        pokemons: list[Pokemon] = []
+        for coro in asyncio.as_completed(tasks):
+            p = await coro
+            if p is not None:
+                pokemons.append(p)
 
-    db_path = output_db or "pokemon.db"
-    storage = Storage(db_path=db_path)
     if output_json:
-        storage.save_json(pokemons, output_json)
-    if output_db or not output_json:
-        storage.save_sqlite(pokemons)
+        storage.export_json_from_db(output_json)
     return pokemons
 
 
