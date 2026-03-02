@@ -147,7 +147,9 @@ class BulbapediaParser:
         tree = html.fromstring(html_content)
         all_infobox = tree.xpath(XPATH_INFOBOX_TABLES)
         main_infobox = all_infobox[:1]  # só a primeira tabela (infobox principal)
-        form_specs = self._extract_form_image_specs_from_infobox(main_infobox)
+        form_specs = self._extract_form_image_specs_from_infobox(
+            main_infobox, pokemon_name=pokemon_name
+        )
         # Só ativa extração por formas quando a página tem mais de uma forma (ex.: Basculin)
         if len(form_specs) >= 2:
             return form_specs
@@ -404,15 +406,18 @@ class BulbapediaParser:
         return []
 
     def _extract_form_image_specs_from_infobox(
-        self, infobox_tables: List[etree._Element]
+        self,
+        infobox_tables: List[etree._Element],
+        pokemon_name: Optional[str] = None,
     ) -> list[tuple[Optional[str], str]]:
         """
         Extrai (form_key, url) a partir da tabela de formas: span[@typeof="mw:File"]
         com a[@class="mw-file-description"] (img) e following-sibling::small (descrição).
-        Só retorna entradas com src permitido e small com texto.
+        Aceita labels com "form", "mega" ou igual ao nome do Pokémon (forma padrão).
         """
         seen: set[str] = set()
         specs: list[tuple[Optional[str], str]] = []
+        name_norm = pokemon_name.strip().lower() if pokemon_name else ""
         for table in infobox_tables:
             for span in table.xpath(XPATH_FORM_IMAGE_SPANS):
                 imgs = span.xpath('.//a[@class="mw-file-description"]/img/@src')
@@ -425,7 +430,10 @@ class BulbapediaParser:
                 form_label = _text(smalls[0]).strip() if smalls else ""
                 if not form_label or "{{{" in form_label:
                     continue
-                if "form" not in form_label.lower():
+                lower_label = form_label.lower()
+                is_form_or_mega = "form" in lower_label or "mega" in lower_label
+                is_default_form = name_norm and lower_label == name_norm
+                if not is_form_or_mega and not is_default_form:
                     continue
                 form_key = _safe_form_key(form_label)
                 if form_key in seen:

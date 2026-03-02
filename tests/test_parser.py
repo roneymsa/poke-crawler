@@ -324,6 +324,23 @@ class TestBulbapediaParserCharmanderImage:
         assert "250px" in url or "500px" in url or "375px" in url
 
 
+class TestBulbapediaParserDragoniteImage:
+    """Dragonite tem forma normal + Mega; deve retornar as duas imagens."""
+
+    def test_dragonite_image_specs_returns_default_and_mega(self):
+        path = FIXTURES_DIR / "bulbapedia_dragonite.html"
+        html = _load_fixture_html(path)
+        parser = BulbapediaParser()
+        specs = parser.get_image_specs(html, "Dragonite")
+        assert len(specs) == 2
+        form_keys = {k for k, _ in specs}
+        urls = [u for _, u in specs]
+        assert "Dragonite" in form_keys
+        assert "Mega_Dragonite" in form_keys
+        assert any("0149dragonite.png" in u.lower() and "mega" not in u.lower() for u in urls)
+        assert any("dragonite-mega" in u.lower() for u in urls)
+
+
 class TestBulbapediaParserEdgeCases:
     def test_parse_empty_html_returns_empty_name(self):
         parser = BulbapediaParser()
