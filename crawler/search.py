@@ -22,6 +22,8 @@ def find_pokemon_page(name: str, client: "BulbapediaClient") -> list[tuple[str, 
     """
     Usa o OpenSearch da Bulbapedia e retorna lista de (nome_exibição, url) para
     artigos que batem com "{name} (Pokémon)" (inclui variantes Nidoran♂/Nidoran♀).
+    A API é case-insensitive (ex.: "beldum" já retorna "Beldum (Pokémon)"); o matching
+    interno também ignora maiúsculas/minúsculas.
     """
     name = (name or "").strip()
     if not name:
@@ -51,31 +53,33 @@ def find_pokemon_page(name: str, client: "BulbapediaClient") -> list[tuple[str, 
     if not titles or not urls:
         return []
 
-    # Match exato: "Name (Pokémon)"
-    expected_title = f"{name}{POKEMON_SUFFIX}"
-    try:
-        idx = titles.index(expected_title)
-        if idx < len(urls) and isinstance(urls[idx], str):
-            return [(name, urls[idx])]
-    except ValueError:
-        pass
+    # Match exato (case-insensitive): "beldum" → "Beldum (Pokémon)" retornado pela API
+    name_lower = name.lower()
+    expected_suffix = (name + POKEMON_SUFFIX).lower()
+    for i, title in enumerate(titles):
+        if not isinstance(title, str) or not title.endswith(POKEMON_SUFFIX):
+            continue
+        if title.lower() == expected_suffix and i < len(urls) and isinstance(urls[i], str):
+            prefix = title[: -len(POKEMON_SUFFIX)].strip()
+            return [(prefix, urls[i])]
 
-    # Títulos "(Pokémon)" cujo nome começa com a busca (ex.: "Lucari" → "Lucario (Pokémon)", "Nidoran" → Nidoran♂/♀)
+    # Títulos "(Pokémon)" cujo nome começa com a busca (ex.: "Lucari" → "Lucario", "Nidoran" → Nidoran♂/♀)
     results: list[tuple[str, str]] = []
     for i, title in enumerate(titles):
         if not isinstance(title, str) or not title.endswith(POKEMON_SUFFIX):
             continue
         prefix = title[: -len(POKEMON_SUFFIX)].strip()
-        if (prefix == name or prefix.startswith(name)) and i < len(urls) and isinstance(urls[i], str):
+        if (prefix.lower() == name_lower or prefix.lower().startswith(name_lower)) and i < len(urls) and isinstance(urls[i], str):
             results.append((prefix, urls[i]))
     if results:
         return results
 
-    # Fallback: slug na URL (ex.: Nidoran_(Pokémon))
-    slug = name.replace(" ", "_")
+    # Fallback: slug na URL (case-insensitive)
+    slug = name.replace(" ", "_").lower()
     for i, u in enumerate(urls):
-        if isinstance(u, str) and f"{slug}_(Pok" in u and i < len(titles) and POKEMON_SUFFIX in str(titles[i]):
-            return [(name, u)]
+        if isinstance(u, str) and slug in u.lower() and "_(pok" in u.lower() and i < len(titles) and POKEMON_SUFFIX in str(titles[i]):
+            prefix = titles[i][: -len(POKEMON_SUFFIX)].strip() if isinstance(titles[i], str) else name
+            return [(prefix, u)]
 
-    logger.debug("'%s': página '%s' não encontrada", name, expected_title)
+    logger.debug("'%s': página '(Pokémon)' não encontrada", name)
     return []

@@ -1,15 +1,19 @@
-images/
-imagens/
-img/
-saida.json
-saida.db
-pokemon.json
-pokemon.db
-output/
-
 __pycache__/
 *.py[cod]
 *$py.class
 .venv/
 venv/
 env/
+
+# Artefatos do crawler (não versionar; data/todos_pokemons.db fica versionado para GitHub Actions)
+saida.json
+saida.db
+pokemon.json
+pokemon.db
+output/
+
+# Imagens baixadas
+images/
+imagens/
+img/
+data/images/

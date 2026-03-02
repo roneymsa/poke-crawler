@@ -1,0 +1,36 @@
+name: Pokémon worker
+
+on:
+  schedule:
+    # A cada 20 minutos
+    - cron: "*/20 * * * *"
+  workflow_dispatch:
+
+jobs:
+  worker:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run worker (lote pendente)
+        run: python main.py --worker --db data/todos_pokemons.db --images data/images --batch-size 25
+
+      - name: Commit and push DB
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/todos_pokemons.db
+          git status
+          git diff --staged --quiet || git commit -m "chore: worker update (cron)"
+          git push
