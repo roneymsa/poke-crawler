@@ -1,0 +1,35 @@
+name: Sync Pokémon links
+
+on:
+  schedule:
+    # 1x por dia às 02:00 UTC (ajuste o cron se quiser outro fuso)
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run sync (National Dex → DB)
+        run: python main.py --sync-links --db data/todos_pokemons.db
+
+      - name: Commit and push DB
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/todos_pokemons.db
+          git diff --staged --quiet || git commit -m "chore: sync Pokémon links (cron)"
+          git push

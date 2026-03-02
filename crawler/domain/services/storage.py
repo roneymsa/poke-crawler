@@ -60,11 +60,18 @@ class Storage:
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             );
         """)
-        try:
-            conn.execute("ALTER TABLE pokemon ADD COLUMN form_image_paths TEXT")
-            conn.commit()
-        except sqlite3.OperationalError:
-            pass
+        for col, typ in [
+            ("form_image_paths", "TEXT"),
+            ("url", "TEXT"),
+            ("status", "TEXT DEFAULT 'pending'"),
+            ("retries", "INTEGER DEFAULT 0"),
+            ("updated_at", "TEXT"),
+        ]:
+            try:
+                conn.execute(f"ALTER TABLE pokemon ADD COLUMN {col} {typ}")
+                conn.commit()
+            except sqlite3.OperationalError:
+                pass
         conn.commit()
 
     def _upsert_one(self, conn: sqlite3.Connection, p: Pokemon) -> None:
@@ -103,7 +110,8 @@ class Storage:
             UPDATE pokemon SET
                 national_dex_number = ?, category = ?, types = ?,
                 hp = ?, attack = ?, defense = ?, sp_atk = ?, sp_def = ?, speed = ?,
-                evolution_prev = ?, evolution_next = ?, abilities = ?, image_path = ?, form_image_paths = ?, gender_ratio = ?
+                evolution_prev = ?, evolution_next = ?, abilities = ?, image_path = ?, form_image_paths = ?, gender_ratio = ?,
+                status = 'done', updated_at = CURRENT_TIMESTAMP, retries = 0
             WHERE name = ?
             """,
             row,
@@ -114,8 +122,9 @@ class Storage:
                 INSERT INTO pokemon (
                     name, national_dex_number, category, types,
                     hp, attack, defense, sp_atk, sp_def, speed,
-                    evolution_prev, evolution_next, abilities, image_path, form_image_paths, gender_ratio
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    evolution_prev, evolution_next, abilities, image_path, form_image_paths, gender_ratio,
+                    status, retries
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'done', 0)
                 """,
                 (
                     p.name,
@@ -138,12 +147,70 @@ class Storage:
             )
 
     def save_one_sqlite(self, pokemon: Pokemon) -> None:
-        """Persiste um único Pokémon no SQLite (upsert por nome). Chamado a cada parse."""
+        """Persiste um único Pokémon no SQLite (upsert por nome). Atualiza status='done', updated_at, retries=0."""
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
         conn = sqlite3.connect(self.db_path)
         try:
             self._ensure_schema(conn)
             self._upsert_one(conn, pokemon)
+            conn.commit()
+        finally:
+            conn.close()
+
+    def upsert_pokemon_link(self, name: str, url: str) -> None:
+        """Insere ou atualiza (name, url) e define status='pending', retries=0. Usado pelo job de sync."""
+        Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
+        conn = sqlite3.connect(self.db_path)
+        try:
+            self._ensure_schema(conn)
+            cur = conn.execute(
+                "UPDATE pokemon SET url = ?, status = 'pending', retries = 0 WHERE name = ?",
+                (url, name),
+            )
+            if cur.rowcount == 0:
+                conn.execute(
+                    "INSERT INTO pokemon (name, url, status, retries) VALUES (?, ?, 'pending', 0)",
+                    (name, url),
+                )
+            conn.commit()
+        finally:
+            conn.close()
+
+    def get_pending_batch(
+        self, limit: int, max_retries: int = 3
+    ) -> list[tuple[int, str, str, int]]:
+        """
+        Retorna lote de pendentes: (id, name, url, retries).
+        status IN ('pending','failed'), retries < max_retries, ordenado por updated_at ASC NULLS FIRST.
+        """
+        conn = sqlite3.connect(self.db_path)
+        try:
+            self._ensure_schema(conn)
+            rows = conn.execute(
+                """
+                SELECT id, name, url, COALESCE(retries, 0)
+                FROM pokemon
+                WHERE (status = 'pending' OR status = 'failed')
+                  AND (retries IS NULL OR retries < ?)
+                  AND url IS NOT NULL AND url != ''
+                ORDER BY updated_at ASC NULLS FIRST, id ASC
+                LIMIT ?
+                """,
+                (max_retries, limit),
+            ).fetchall()
+            return [(r[0], r[1], r[2], r[3]) for r in rows]
+        finally:
+            conn.close()
+
+    def mark_error(self, pokemon_id: int, retries: int, max_retries: int = 3) -> None:
+        """Marca falha: incrementa retries; status='failed' se retries >= max_retries."""
+        status = "failed" if retries >= max_retries else "pending"
+        conn = sqlite3.connect(self.db_path)
+        try:
+            conn.execute(
+                "UPDATE pokemon SET status = ?, retries = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                (status, retries, pokemon_id),
+            )
             conn.commit()
         finally:
             conn.close()
