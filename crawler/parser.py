@@ -13,6 +13,8 @@ if TYPE_CHECKING:
     from crawler.downloader import ImageDownloader
 
 BULBAPEDIA_IMAGE_BASE = "https://bulbapedia.bulbagarden.net"
+MIN_FORMS_FOR_MULTI_IMAGE = 2  # Só usa extração por formas quando há 2+ (ex.: Basculin)
+MIN_ARTWORK_PX = 100  # Thumbnails menores são ignorados no fallback de imagem única
 
 # XPath: tabelas infobox (roundy ou infobox no class)
 XPATH_INFOBOX_TABLES = '//table[contains(@class,"roundy") or contains(@class,"infobox")]'
@@ -34,6 +36,11 @@ def _text(el) -> str:
     if el is None:
         return ""
     return (el.text_content() or "").strip()
+
+
+def _text_first(nodes: list, default: str = "") -> str:
+    """Texto do primeiro nó da lista, ou default se vazio."""
+    return _text(nodes[0]).strip() if nodes else default
 
 
 def _safe_int(value: Optional[str]) -> Optional[int]:
@@ -78,6 +85,16 @@ def _safe_form_key(label: str) -> str:
     s = re.sub(r"[^\w\s-]", "", s)
     s = re.sub(r"[-\s]+", "_", s).strip("_")
     return s or "default"
+
+
+def _is_acceptable_form_label(form_label: str, name_norm: str) -> bool:
+    """True se o label é de forma válida: contém 'form'/'mega' ou é o nome do Pokémon (forma padrão)."""
+    if not form_label or "{{{" in form_label:
+        return False
+    lower = form_label.lower()
+    if "form" in lower or "mega" in lower:
+        return True
+    return bool(name_norm and lower == name_norm)
 
 
 def _dedupe_abilities(abilities: list[AbilityInfo]) -> list[AbilityInfo]:
@@ -150,8 +167,7 @@ class BulbapediaParser:
         form_specs = self._extract_form_image_specs_from_infobox(
             main_infobox, pokemon_name=pokemon_name
         )
-        # Só ativa extração por formas quando a página tem mais de uma forma (ex.: Basculin)
-        if len(form_specs) >= 2:
+        if len(form_specs) >= MIN_FORMS_FOR_MULTI_IMAGE:
             return form_specs
         return self._extract_image_specs(main_infobox, pokemon_name=pokemon_name)
 
@@ -380,6 +396,7 @@ class BulbapediaParser:
         return result
 
     def _extract_abilities(self, tree: etree._Element, infobox_tables: List[etree._Element]) -> list[AbilityInfo]:
+        """Tenta extrair habilidades do infobox; fallback em células que mencionam 'abilities'."""
         for table in infobox_tables:
             for row in table.xpath(".//tr"):
                 th_list = row.xpath("./th")
@@ -427,13 +444,8 @@ class BulbapediaParser:
                 src = (imgs[0] or "").strip()
                 if not src or not self._image_src_allowed(src):
                     continue
-                form_label = _text(smalls[0]).strip() if smalls else ""
-                if not form_label or "{{{" in form_label:
-                    continue
-                lower_label = form_label.lower()
-                is_form_or_mega = "form" in lower_label or "mega" in lower_label
-                is_default_form = name_norm and lower_label == name_norm
-                if not is_form_or_mega and not is_default_form:
+                form_label = _text_first(smalls)
+                if not _is_acceptable_form_label(form_label, name_norm):
                     continue
                 form_key = _safe_form_key(form_label)
                 if form_key in seen:
@@ -471,7 +483,7 @@ class BulbapediaParser:
             return False
         if re.search(r"/\d+px-", src):
             px = re.findall(r"/(\d+)px-", src)
-            if px and int(px[0]) < 100:
+            if px and int(px[0]) < MIN_ARTWORK_PX:
                 return False
         return True
 
