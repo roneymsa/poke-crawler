@@ -57,7 +57,6 @@ def _build_parser() -> argparse.ArgumentParser:
     ap.add_argument(
         "positional_names",
         nargs="*",
-        dest="positional_names",
         metavar="NOME",
         help='Nomes dos Pokémon (ex: Bulbasaur Charmander). Dica: use aspas para nomes com espaço, ex: "Mr. Mime"',
     )
