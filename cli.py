@@ -55,8 +55,10 @@ def _read_names_file(path: str) -> list[str]:
 def _build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description="Poké-Crawler (Bulbapedia)")
     ap.add_argument(
-        "names",
+        "positional_names",
         nargs="*",
+        dest="positional_names",
+        metavar="NOME",
         help='Nomes dos Pokémon (ex: Bulbasaur Charmander). Dica: use aspas para nomes com espaço, ex: "Mr. Mime"',
     )
     ap.add_argument(
@@ -157,9 +159,9 @@ def main() -> None:
         return
 
     names: list[str] = []
-    names.extend(args.names or [])
+    names.extend(args.positional_names or [])
     names.extend(args.name or [])
-    if args.names:
+    if args.names is not None and isinstance(args.names, str):
         names.extend(_split_names_arg(args.names))
     if args.list:
         try:

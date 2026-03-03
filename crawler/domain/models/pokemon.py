@@ -2,11 +2,13 @@
 
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class BaseStats(BaseModel):
     """Atributos base (Base Stats) do Pokémon."""
+
+    model_config = ConfigDict(populate_by_name=True)
 
     hp: int = Field(default=0, ge=0, le=255, description="Hit Points")
     attack: int = Field(default=0, ge=0, le=255, alias="Attack")
@@ -14,9 +16,6 @@ class BaseStats(BaseModel):
     sp_atk: int = Field(default=0, ge=0, le=255, alias="Sp. Atk")
     sp_def: int = Field(default=0, ge=0, le=255, alias="Sp. Def")
     speed: int = Field(default=0, ge=0, le=255, alias="Speed")
-
-    class Config:
-        populate_by_name = True
 
 
 class AbilityInfo(BaseModel):
@@ -36,6 +35,8 @@ class GenderRatio(BaseModel):
 class Pokemon(BaseModel):
     """Entidade de domínio: Pokémon com dados da Bulbapedia."""
 
+    model_config = ConfigDict(populate_by_name=True)
+
     name: str = ""
     national_dex_number: Optional[int] = None
     category: Optional[str] = None
@@ -47,6 +48,3 @@ class Pokemon(BaseModel):
     image_path: Optional[str] = None
     form_image_paths: Optional[dict[str, str]] = None
     gender_ratio: Optional[GenderRatio] = None
-
-    class Config:
-        populate_by_name = True

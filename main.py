@@ -7,12 +7,10 @@ Uso:
   python main.py --get-all
   python main.py --sync-links   (cron diário: atualiza lista de links no banco)
   python main.py --worker       (cron frequente: processa um lote pendente)
+
+Recomendado: executar na raiz do projeto (onde estão main.py e crawler/).
+Alternativa: python -m cli (a partir da raiz).
 """
-
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from cli import main
 

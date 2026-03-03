@@ -150,13 +150,23 @@ class BulbapediaClient:
 
         return _fetch()
 
+    def close(self) -> None:
+        """Fecha os clientes HTTP (sync). Use com context manager ou ao terminar."""
+        self._sync_client.close()
+
     async def aclose(self) -> None:
         """Fecha os clientes HTTP (async + sync). Chame ao terminar o uso."""
         await self._async_client.aclose()
         self._sync_client.close()
 
+    def __enter__(self) -> "BulbapediaClient":
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        self.close()
+
     async def __aenter__(self) -> "BulbapediaClient":
         return self
 
-    async def __aexit__(self, *args) -> None:
+    async def __aexit__(self, *args: object) -> None:
         await self.aclose()
