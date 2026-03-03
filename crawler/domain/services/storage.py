@@ -228,22 +228,28 @@ class Storage:
         finally:
             conn.close()
 
-    def export_json_from_db(self, path: str = "pokemon.json") -> None:
-        """Exporta para JSON os Pokémon que estão no SQLite (busca os nomes salvos no banco)."""
-        pokemons = self.load_sqlite()
+    def export_json_from_db(
+        self, path: str = "pokemon.json", only_done: bool = False
+    ) -> None:
+        """Exporta para JSON os Pokémon do SQLite. Se only_done=True, só os com status='done'."""
+        pokemons = self.load_sqlite(only_done=only_done)
         self.save_json(pokemons, path)
 
-    def load_sqlite(self) -> List[Pokemon]:
-        """Carrega todos os Pokémon do SQLite."""
+    def load_sqlite(self, only_done: bool = False) -> List[Pokemon]:
+        """Carrega Pokémon do SQLite. Se only_done=True, apenas os com status='done'."""
         conn = sqlite3.connect(self.db_path)
         try:
             self._ensure_schema(conn)
-            rows = conn.execute("""
+            where = " WHERE status = 'done'" if only_done else ""
+            rows = conn.execute(
+                """
                 SELECT name, national_dex_number, category, types,
                        hp, attack, defense, sp_atk, sp_def, speed,
                        evolution_prev, evolution_next, abilities, image_path, form_image_paths, gender_ratio
                 FROM pokemon
-            """).fetchall()
+                """
+                + where
+            ).fetchall()
             result = []
             for row in rows:
                 (name, ndex, category, types_json, hp, atk, defe, spa, spd, spe,

@@ -2,6 +2,15 @@
 
 Crawler que extrai informações detalhadas de Pokémon a partir do portal [Bulbapedia](https://bulbapedia.bulbagarden.net/). Para cada Pokémon são coletados: nome, número nacional, categoria, tipos, base stats, evoluções, habilidades (com indicação de Hidden Ability) e imagem (salva em pasta local).
 
+### Dados coletados (JSON público)
+
+O worker do GitHub Actions exporta os Pokémon já coletados para JSON e faz commit no repositório. Quem clonar o repo ou acessar o link **raw** do arquivo vê os últimos resultados:
+
+- **Link (substitua `SEU_USUARIO` e `poke-crawler` pelo seu usuário/repo):**  
+  `https://raw.githubusercontent.com/SEU_USUARIO/poke-crawler/main/data/pokemon_export.json`
+
+Arquivo gerado automaticamente a cada run do workflow *Pokémon worker* (apenas Pokémon com `status=done`).
+
 ## Estrutura do projeto
 
 Organização em **Domain Driven Design (DDD)**: domínio em `crawler/domain/` (modelos, serviços, exceções); infra e aplicação em `crawler/` e `main.py`.

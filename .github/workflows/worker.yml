@@ -26,11 +26,14 @@ jobs:
       - name: Run worker (lote pendente)
         run: python main.py --worker --db data/todos_pokemons.db --images data/images --batch-size 25
 
-      - name: Commit and push DB
+      - name: Export JSON (só coletados)
+        run: python -c "from crawler.domain.services.storage import Storage; Storage('data/todos_pokemons.db').export_json_from_db('data/pokemon_export.json', only_done=True)"
+
+      - name: Commit and push DB + JSON
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/todos_pokemons.db
+          git add data/todos_pokemons.db data/pokemon_export.json
           git status
           git diff --staged --quiet || git commit -m "chore: worker update (cron)"
           git push
