@@ -152,7 +152,8 @@ async def run_worker(
     images_dir: str = "images",
     batch_size: int = BATCH_SIZE,
 ) -> None:
-    """Job 2: processa um lote de pendentes (fetch → parse → imagens → save), com delay anti-ban."""
+    """Job 2: processa um lote de pendentes (fetch → parse → imagens → save), com delay anti-ban.
+    batch_size define quantos processar por rodada (ex.: 6 runs/dia a cada 4h)."""
     storage = Storage(db_path=db_path)
     batch = storage.get_pending_batch(limit=batch_size, max_retries=MAX_RETRIES)
     if not batch:

@@ -2,8 +2,8 @@ name: Pokémon worker
 
 on:
   schedule:
-    # A cada 20 minutos
-    - cron: "*/20 * * * *"
+    # A cada 4 horas (00:00, 04:00, 08:00, 12:00, 16:00, 20:00 UTC)
+    - cron: "0 */4 * * *"
   workflow_dispatch:
 
 jobs:
@@ -23,8 +23,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run worker (lote pendente)
-        run: python main.py --worker --db data/todos_pokemons.db --images data/images --batch-size 25
+      - name: Run worker (lote a cada 4h, 100 por rodada)
+        run: python main.py --worker --db data/todos_pokemons.db --images data/images --batch-size 100
 
       - name: Export JSON (só coletados)
         run: python -c "from crawler.domain.services.storage import Storage; Storage('data/todos_pokemons.db').export_json_from_db('data/pokemon_export.json', only_done=True)"

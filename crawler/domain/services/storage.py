@@ -176,6 +176,24 @@ class Storage:
         finally:
             conn.close()
 
+    def get_pending_count(self, max_retries: int = 3) -> int:
+        """Retorna a quantidade de registros pendentes (mesmos critérios de get_pending_batch)."""
+        conn = sqlite3.connect(self.db_path)
+        try:
+            self._ensure_schema(conn)
+            row = conn.execute(
+                """
+                SELECT COUNT(*) FROM pokemon
+                WHERE (status = 'pending' OR status = 'failed')
+                  AND (retries IS NULL OR retries < ?)
+                  AND url IS NOT NULL AND url != ''
+                """,
+                (max_retries,),
+            ).fetchone()
+            return row[0] if row else 0
+        finally:
+            conn.close()
+
     def get_pending_batch(
         self, limit: int, max_retries: int = 3
     ) -> list[tuple[int, str, str, int]]:
