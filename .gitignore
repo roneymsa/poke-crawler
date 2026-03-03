@@ -4,6 +4,7 @@ __pycache__/
 .venv/
 venv/
 env/
+NUL
 
 # Artefatos do crawler (não versionar; data/todos_pokemons.db fica versionado para GitHub Actions)
 saida.json
