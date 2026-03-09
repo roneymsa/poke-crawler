@@ -3616,5 +3616,3564 @@
       "male": 50.0,
       "female": 50.0
     }
+  },
+  {
+    "name": "Furfrou",
+    "national_dex_number": 676,
+    "category": "Poodle Pokémon",
+    "types": [
+      "Normal"
+    ],
+    "base_stats": {
+      "hp": 75,
+      "attack": 80,
+      "defense": 60,
+      "sp_atk": 65,
+      "sp_def": 90,
+      "speed": 102
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [],
+    "image_path": "data/images/Furfrou.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Espurr",
+    "national_dex_number": 677,
+    "category": "Restraint Pokémon",
+    "types": [
+      "Psychic"
+    ],
+    "base_stats": {
+      "hp": 62,
+      "attack": 48,
+      "defense": 54,
+      "sp_atk": 63,
+      "sp_def": 60,
+      "speed": 68
+    },
+    "evolution_prev": null,
+    "evolution_next": "Meowstic",
+    "abilities": [
+      {
+        "name": "Keen Eye",
+        "is_hidden": false
+      },
+      {
+        "name": "Infiltrator",
+        "is_hidden": false
+      },
+      {
+        "name": "Own Tempo",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Espurr.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Meowstic",
+    "national_dex_number": 678,
+    "category": "Constraint PokémonSecond Sight Pokémon",
+    "types": [
+      "Psychic"
+    ],
+    "base_stats": {
+      "hp": 74,
+      "attack": 48,
+      "defense": 76,
+      "sp_atk": 83,
+      "sp_def": 81,
+      "speed": 104
+    },
+    "evolution_prev": "Espurr",
+    "evolution_next": "Meowstic",
+    "abilities": [
+      {
+        "name": "Keen Eye",
+        "is_hidden": false
+      },
+      {
+        "name": "Infiltrator",
+        "is_hidden": false
+      },
+      {
+        "name": "Prankster",
+        "is_hidden": true
+      },
+      {
+        "name": "Competitive",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Meowstic_Meowstic.png",
+    "form_image_paths": {
+      "Meowstic": "data/images/Meowstic_Meowstic.png",
+      "Mega_Meowstic": "data/images/Meowstic_Mega_Meowstic.png"
+    },
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Honedge",
+    "national_dex_number": 679,
+    "category": "Sword Pokémon",
+    "types": [
+      "Steel",
+      "Ghost"
+    ],
+    "base_stats": {
+      "hp": 45,
+      "attack": 80,
+      "defense": 100,
+      "sp_atk": 35,
+      "sp_def": 37,
+      "speed": 28
+    },
+    "evolution_prev": null,
+    "evolution_next": "Doublade",
+    "abilities": [],
+    "image_path": "data/images/Honedge.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Doublade",
+    "national_dex_number": 680,
+    "category": "Sword Pokémon",
+    "types": [
+      "Steel",
+      "Ghost"
+    ],
+    "base_stats": {
+      "hp": 59,
+      "attack": 110,
+      "defense": 150,
+      "sp_atk": 45,
+      "sp_def": 49,
+      "speed": 35
+    },
+    "evolution_prev": "Honedge",
+    "evolution_next": "Aegislash",
+    "abilities": [],
+    "image_path": "data/images/Doublade.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Aegislash",
+    "national_dex_number": 681,
+    "category": "Royal Sword Pokémon",
+    "types": [
+      "Steel",
+      "Ghost"
+    ],
+    "base_stats": {
+      "hp": 60,
+      "attack": 50,
+      "defense": 150,
+      "sp_atk": 50,
+      "sp_def": 150,
+      "speed": 60
+    },
+    "evolution_prev": "Doublade",
+    "evolution_next": null,
+    "abilities": [],
+    "image_path": "data/images/Aegislash_Shield_Forme.png",
+    "form_image_paths": {
+      "Shield_Forme": "data/images/Aegislash_Shield_Forme.png",
+      "Blade_Forme": "data/images/Aegislash_Blade_Forme.png"
+    },
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Spritzee",
+    "national_dex_number": 682,
+    "category": "Perfume Pokémon",
+    "types": [
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 78,
+      "attack": 52,
+      "defense": 60,
+      "sp_atk": 63,
+      "sp_def": 65,
+      "speed": 23
+    },
+    "evolution_prev": null,
+    "evolution_next": "Aromatisse",
+    "abilities": [
+      {
+        "name": "Healer",
+        "is_hidden": false
+      },
+      {
+        "name": "Aroma Veil",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Spritzee.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Aromatisse",
+    "national_dex_number": 683,
+    "category": "Fragrance Pokémon",
+    "types": [
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 101,
+      "attack": 72,
+      "defense": 72,
+      "sp_atk": 99,
+      "sp_def": 89,
+      "speed": 29
+    },
+    "evolution_prev": "Spritzee",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Healer",
+        "is_hidden": false
+      },
+      {
+        "name": "Aroma Veil",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Aromatisse.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Swirlix",
+    "national_dex_number": 684,
+    "category": "Cotton Candy Pokémon",
+    "types": [
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 62,
+      "attack": 48,
+      "defense": 66,
+      "sp_atk": 59,
+      "sp_def": 57,
+      "speed": 49
+    },
+    "evolution_prev": null,
+    "evolution_next": "Slurpuff",
+    "abilities": [
+      {
+        "name": "Sweet Veil",
+        "is_hidden": false
+      },
+      {
+        "name": "Unburden",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Swirlix.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Slurpuff",
+    "national_dex_number": 685,
+    "category": "Meringue Pokémon",
+    "types": [
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 82,
+      "attack": 80,
+      "defense": 86,
+      "sp_atk": 85,
+      "sp_def": 75,
+      "speed": 72
+    },
+    "evolution_prev": "Swirlix",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Sweet Veil",
+        "is_hidden": false
+      },
+      {
+        "name": "Unburden",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Slurpuff.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Inkay",
+    "national_dex_number": 686,
+    "category": "Revolving Pokémon",
+    "types": [
+      "Dark",
+      "Psychic"
+    ],
+    "base_stats": {
+      "hp": 53,
+      "attack": 54,
+      "defense": 53,
+      "sp_atk": 37,
+      "sp_def": 46,
+      "speed": 45
+    },
+    "evolution_prev": null,
+    "evolution_next": "Malamar",
+    "abilities": [
+      {
+        "name": "Contrary",
+        "is_hidden": false
+      },
+      {
+        "name": "Suction Cups",
+        "is_hidden": false
+      },
+      {
+        "name": "Infiltrator",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Inkay.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Malamar",
+    "national_dex_number": 687,
+    "category": "Overturning Pokémon",
+    "types": [
+      "Dark",
+      "Psychic"
+    ],
+    "base_stats": {
+      "hp": 86,
+      "attack": 92,
+      "defense": 88,
+      "sp_atk": 68,
+      "sp_def": 75,
+      "speed": 73
+    },
+    "evolution_prev": "Inkay",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Contrary",
+        "is_hidden": false
+      },
+      {
+        "name": "Suction Cups",
+        "is_hidden": false
+      },
+      {
+        "name": "Infiltrator",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Malamar_Malamar.png",
+    "form_image_paths": {
+      "Malamar": "data/images/Malamar_Malamar.png",
+      "Mega_Malamar": "data/images/Malamar_Mega_Malamar.png"
+    },
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Binacle",
+    "national_dex_number": 688,
+    "category": "Two-Handed Pokémon",
+    "types": [
+      "Rock",
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 42,
+      "attack": 52,
+      "defense": 67,
+      "sp_atk": 39,
+      "sp_def": 56,
+      "speed": 50
+    },
+    "evolution_prev": null,
+    "evolution_next": "Barbaracle",
+    "abilities": [
+      {
+        "name": "Tough Claws",
+        "is_hidden": false
+      },
+      {
+        "name": "Sniper",
+        "is_hidden": false
+      },
+      {
+        "name": "Pickpocket",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Binacle.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Barbaracle",
+    "national_dex_number": 689,
+    "category": "Collective Pokémon",
+    "types": [
+      "Rock",
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 72,
+      "attack": 105,
+      "defense": 115,
+      "sp_atk": 54,
+      "sp_def": 86,
+      "speed": 68
+    },
+    "evolution_prev": "Binacle",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Tough Claws",
+        "is_hidden": false
+      },
+      {
+        "name": "Sniper",
+        "is_hidden": false
+      },
+      {
+        "name": "Pickpocket",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Barbaracle_Barbaracle.png",
+    "form_image_paths": {
+      "Barbaracle": "data/images/Barbaracle_Barbaracle.png",
+      "Mega_Barbaracle": "data/images/Barbaracle_Mega_Barbaracle.png"
+    },
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Skrelp",
+    "national_dex_number": 690,
+    "category": "Mock Kelp Pokémon",
+    "types": [
+      "Poison",
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 50,
+      "attack": 60,
+      "defense": 60,
+      "sp_atk": 60,
+      "sp_def": 60,
+      "speed": 30
+    },
+    "evolution_prev": null,
+    "evolution_next": "Dragalge",
+    "abilities": [
+      {
+        "name": "Poison Point",
+        "is_hidden": false
+      },
+      {
+        "name": "Poison Touch",
+        "is_hidden": false
+      },
+      {
+        "name": "Adaptability",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Skrelp.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Dragalge",
+    "national_dex_number": 691,
+    "category": "Mock Kelp Pokémon",
+    "types": [
+      "Poison",
+      "Dragon"
+    ],
+    "base_stats": {
+      "hp": 65,
+      "attack": 75,
+      "defense": 90,
+      "sp_atk": 97,
+      "sp_def": 123,
+      "speed": 44
+    },
+    "evolution_prev": "Skrelp",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Poison Point",
+        "is_hidden": false
+      },
+      {
+        "name": "Poison Touch",
+        "is_hidden": false
+      },
+      {
+        "name": "Adaptability",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Dragalge_Dragalge.png",
+    "form_image_paths": {
+      "Dragalge": "data/images/Dragalge_Dragalge.png",
+      "Mega_Dragalge": "data/images/Dragalge_Mega_Dragalge.png"
+    },
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Clauncher",
+    "national_dex_number": 692,
+    "category": "Water Gun Pokémon",
+    "types": [
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 50,
+      "attack": 53,
+      "defense": 62,
+      "sp_atk": 58,
+      "sp_def": 63,
+      "speed": 44
+    },
+    "evolution_prev": null,
+    "evolution_next": "Clawitzer",
+    "abilities": [],
+    "image_path": "data/images/Clauncher.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Clawitzer",
+    "national_dex_number": 693,
+    "category": "Howitzer Pokémon",
+    "types": [
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 71,
+      "attack": 73,
+      "defense": 88,
+      "sp_atk": 120,
+      "sp_def": 89,
+      "speed": 59
+    },
+    "evolution_prev": "Clauncher",
+    "evolution_next": null,
+    "abilities": [],
+    "image_path": "data/images/Clawitzer.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Helioptile",
+    "national_dex_number": 694,
+    "category": "Generator Pokémon",
+    "types": [
+      "Electric",
+      "Normal"
+    ],
+    "base_stats": {
+      "hp": 44,
+      "attack": 38,
+      "defense": 33,
+      "sp_atk": 61,
+      "sp_def": 43,
+      "speed": 70
+    },
+    "evolution_prev": null,
+    "evolution_next": "Heliolisk",
+    "abilities": [
+      {
+        "name": "Dry Skin",
+        "is_hidden": false
+      },
+      {
+        "name": "Sand Veil",
+        "is_hidden": false
+      },
+      {
+        "name": "Solar Power",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Helioptile.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Heliolisk",
+    "national_dex_number": 695,
+    "category": "Generator Pokémon",
+    "types": [
+      "Electric",
+      "Normal"
+    ],
+    "base_stats": {
+      "hp": 62,
+      "attack": 55,
+      "defense": 52,
+      "sp_atk": 109,
+      "sp_def": 94,
+      "speed": 109
+    },
+    "evolution_prev": "Helioptile",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Dry Skin",
+        "is_hidden": false
+      },
+      {
+        "name": "Sand Veil",
+        "is_hidden": false
+      },
+      {
+        "name": "Solar Power",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Heliolisk.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Tyrunt",
+    "national_dex_number": 696,
+    "category": "Royal Heir Pokémon",
+    "types": [
+      "Rock",
+      "Dragon"
+    ],
+    "base_stats": {
+      "hp": 58,
+      "attack": 89,
+      "defense": 77,
+      "sp_atk": 45,
+      "sp_def": 45,
+      "speed": 48
+    },
+    "evolution_prev": null,
+    "evolution_next": "Tyrantrum",
+    "abilities": [
+      {
+        "name": "Strong Jaw",
+        "is_hidden": false
+      },
+      {
+        "name": "Sturdy",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Tyrunt.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Tyrantrum",
+    "national_dex_number": 697,
+    "category": "Despot Pokémon",
+    "types": [
+      "Rock",
+      "Dragon"
+    ],
+    "base_stats": {
+      "hp": 82,
+      "attack": 121,
+      "defense": 119,
+      "sp_atk": 69,
+      "sp_def": 59,
+      "speed": 71
+    },
+    "evolution_prev": "Tyrunt",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Strong Jaw",
+        "is_hidden": false
+      },
+      {
+        "name": "Rock Head",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Tyrantrum.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Amaura",
+    "national_dex_number": 698,
+    "category": "Tundra Pokémon",
+    "types": [
+      "Rock",
+      "Ice"
+    ],
+    "base_stats": {
+      "hp": 77,
+      "attack": 59,
+      "defense": 50,
+      "sp_atk": 67,
+      "sp_def": 63,
+      "speed": 46
+    },
+    "evolution_prev": null,
+    "evolution_next": "Aurorus",
+    "abilities": [
+      {
+        "name": "Refrigerate",
+        "is_hidden": false
+      },
+      {
+        "name": "Snow Warning",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Amaura.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Aurorus",
+    "national_dex_number": 699,
+    "category": "Tundra Pokémon",
+    "types": [
+      "Rock",
+      "Ice"
+    ],
+    "base_stats": {
+      "hp": 123,
+      "attack": 77,
+      "defense": 72,
+      "sp_atk": 99,
+      "sp_def": 92,
+      "speed": 58
+    },
+    "evolution_prev": "Amaura",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Refrigerate",
+        "is_hidden": false
+      },
+      {
+        "name": "Snow Warning",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Aurorus.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Sylveon",
+    "national_dex_number": 700,
+    "category": "Intertwining Pokémon",
+    "types": [
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 95,
+      "attack": 65,
+      "defense": 65,
+      "sp_atk": 110,
+      "sp_def": 130,
+      "speed": 60
+    },
+    "evolution_prev": "Eevee",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Cute Charm",
+        "is_hidden": false
+      },
+      {
+        "name": "Pixilate",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Sylveon.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Hawlucha",
+    "national_dex_number": 701,
+    "category": "Wrestling Pokémon",
+    "types": [
+      "Fighting",
+      "Flying"
+    ],
+    "base_stats": {
+      "hp": 78,
+      "attack": 92,
+      "defense": 75,
+      "sp_atk": 74,
+      "sp_def": 63,
+      "speed": 118
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Limber",
+        "is_hidden": false
+      },
+      {
+        "name": "Unburden",
+        "is_hidden": false
+      },
+      {
+        "name": "Mold Breaker",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Hawlucha_Hawlucha.png",
+    "form_image_paths": {
+      "Hawlucha": "data/images/Hawlucha_Hawlucha.png",
+      "Mega_Hawlucha": "data/images/Hawlucha_Mega_Hawlucha.png"
+    },
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Dedenne",
+    "national_dex_number": 702,
+    "category": "Antenna Pokémon",
+    "types": [
+      "Electric",
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 67,
+      "attack": 58,
+      "defense": 57,
+      "sp_atk": 81,
+      "sp_def": 67,
+      "speed": 101
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Cheek Pouch",
+        "is_hidden": false
+      },
+      {
+        "name": "Pickup",
+        "is_hidden": false
+      },
+      {
+        "name": "Plus",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Dedenne.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Carbink",
+    "national_dex_number": 703,
+    "category": "Jewel Pokémon",
+    "types": [
+      "Rock",
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 50,
+      "attack": 50,
+      "defense": 150,
+      "sp_atk": 50,
+      "sp_def": 150,
+      "speed": 50
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Clear Body",
+        "is_hidden": false
+      },
+      {
+        "name": "Sturdy",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Carbink.png",
+    "form_image_paths": null,
+    "gender_ratio": null
+  },
+  {
+    "name": "Goomy",
+    "national_dex_number": 704,
+    "category": "Soft Tissue Pokémon",
+    "types": [
+      "Dragon"
+    ],
+    "base_stats": {
+      "hp": 45,
+      "attack": 50,
+      "defense": 35,
+      "sp_atk": 55,
+      "sp_def": 75,
+      "speed": 40
+    },
+    "evolution_prev": null,
+    "evolution_next": "Sliggoo",
+    "abilities": [
+      {
+        "name": "Sap Sipper",
+        "is_hidden": false
+      },
+      {
+        "name": "Hydration",
+        "is_hidden": false
+      },
+      {
+        "name": "Gooey",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Goomy.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Sliggoo",
+    "national_dex_number": 705,
+    "category": "Soft Tissue PokémonSnail Pokémon",
+    "types": [
+      "Dragon",
+      "Steel"
+    ],
+    "base_stats": {
+      "hp": 68,
+      "attack": 75,
+      "defense": 53,
+      "sp_atk": 83,
+      "sp_def": 113,
+      "speed": 60
+    },
+    "evolution_prev": "Goomy",
+    "evolution_next": "Goodra",
+    "abilities": [
+      {
+        "name": "Sap Sipper",
+        "is_hidden": false
+      },
+      {
+        "name": "Hydration",
+        "is_hidden": false
+      },
+      {
+        "name": "Shell Armor",
+        "is_hidden": false
+      },
+      {
+        "name": "Gooey",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Sliggoo.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Goodra",
+    "national_dex_number": 706,
+    "category": "Dragon PokémonShell Bunker Pokémon",
+    "types": [
+      "Dragon",
+      "Steel"
+    ],
+    "base_stats": {
+      "hp": 90,
+      "attack": 100,
+      "defense": 70,
+      "sp_atk": 110,
+      "sp_def": 150,
+      "speed": 80
+    },
+    "evolution_prev": "Sliggoo",
+    "evolution_next": "Sliggoo (Hisuian)",
+    "abilities": [
+      {
+        "name": "Sap Sipper",
+        "is_hidden": false
+      },
+      {
+        "name": "Hydration",
+        "is_hidden": false
+      },
+      {
+        "name": "Shell Armor",
+        "is_hidden": false
+      },
+      {
+        "name": "Gooey",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Goodra.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Klefki",
+    "national_dex_number": 707,
+    "category": "Key Ring Pokémon",
+    "types": [
+      "Steel",
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 57,
+      "attack": 80,
+      "defense": 91,
+      "sp_atk": 80,
+      "sp_def": 87,
+      "speed": 75
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Prankster",
+        "is_hidden": false
+      },
+      {
+        "name": "Magician",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Klefki.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Phantump",
+    "national_dex_number": 708,
+    "category": "Stump Pokémon",
+    "types": [
+      "Ghost",
+      "Grass"
+    ],
+    "base_stats": {
+      "hp": 43,
+      "attack": 70,
+      "defense": 48,
+      "sp_atk": 50,
+      "sp_def": 60,
+      "speed": 38
+    },
+    "evolution_prev": null,
+    "evolution_next": "Trevenant",
+    "abilities": [
+      {
+        "name": "Natural Cure",
+        "is_hidden": false
+      },
+      {
+        "name": "Frisk",
+        "is_hidden": false
+      },
+      {
+        "name": "Harvest",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Phantump.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Trevenant",
+    "national_dex_number": 709,
+    "category": "Elder Tree Pokémon",
+    "types": [
+      "Ghost",
+      "Grass"
+    ],
+    "base_stats": {
+      "hp": 85,
+      "attack": 110,
+      "defense": 76,
+      "sp_atk": 65,
+      "sp_def": 82,
+      "speed": 56
+    },
+    "evolution_prev": "Phantump",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Natural Cure",
+        "is_hidden": false
+      },
+      {
+        "name": "Frisk",
+        "is_hidden": false
+      },
+      {
+        "name": "Harvest",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Trevenant.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Pumpkaboo",
+    "national_dex_number": 710,
+    "category": "Pumpkin Pokémon",
+    "types": [
+      "Ghost",
+      "Grass"
+    ],
+    "base_stats": {
+      "hp": 44,
+      "attack": 66,
+      "defense": 70,
+      "sp_atk": 44,
+      "sp_def": 55,
+      "speed": 56
+    },
+    "evolution_prev": null,
+    "evolution_next": "Gourgeist",
+    "abilities": [
+      {
+        "name": "Pickup",
+        "is_hidden": false
+      },
+      {
+        "name": "Frisk",
+        "is_hidden": false
+      },
+      {
+        "name": "Insomnia",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Pumpkaboo.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Gourgeist",
+    "national_dex_number": 711,
+    "category": "Pumpkin Pokémon",
+    "types": [
+      "Ghost",
+      "Grass"
+    ],
+    "base_stats": {
+      "hp": 55,
+      "attack": 85,
+      "defense": 122,
+      "sp_atk": 58,
+      "sp_def": 75,
+      "speed": 99
+    },
+    "evolution_prev": "Pumpkaboo",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Pickup",
+        "is_hidden": false
+      },
+      {
+        "name": "Frisk",
+        "is_hidden": false
+      },
+      {
+        "name": "Insomnia",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Gourgeist.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Bergmite",
+    "national_dex_number": 712,
+    "category": "Ice Chunk Pokémon",
+    "types": [
+      "Ice"
+    ],
+    "base_stats": {
+      "hp": 55,
+      "attack": 69,
+      "defense": 85,
+      "sp_atk": 32,
+      "sp_def": 35,
+      "speed": 28
+    },
+    "evolution_prev": null,
+    "evolution_next": "Avalugg",
+    "abilities": [
+      {
+        "name": "Own Tempo",
+        "is_hidden": false
+      },
+      {
+        "name": "Ice Body",
+        "is_hidden": false
+      },
+      {
+        "name": "Sturdy",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Bergmite.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Avalugg",
+    "national_dex_number": 713,
+    "category": "Iceberg Pokémon",
+    "types": [
+      "Ice",
+      "Rock"
+    ],
+    "base_stats": {
+      "hp": 95,
+      "attack": 117,
+      "defense": 184,
+      "sp_atk": 44,
+      "sp_def": 46,
+      "speed": 28
+    },
+    "evolution_prev": "Bergmite",
+    "evolution_next": "Avalugg (Hisuian)",
+    "abilities": [
+      {
+        "name": "Own Tempo",
+        "is_hidden": false
+      },
+      {
+        "name": "Ice Body",
+        "is_hidden": false
+      },
+      {
+        "name": "Strong Jaw",
+        "is_hidden": false
+      },
+      {
+        "name": "Sturdy",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Avalugg.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Noibat",
+    "national_dex_number": 714,
+    "category": "Sound Wave Pokémon",
+    "types": [
+      "Flying",
+      "Dragon"
+    ],
+    "base_stats": {
+      "hp": 40,
+      "attack": 30,
+      "defense": 35,
+      "sp_atk": 45,
+      "sp_def": 40,
+      "speed": 55
+    },
+    "evolution_prev": null,
+    "evolution_next": "Noivern",
+    "abilities": [
+      {
+        "name": "Frisk",
+        "is_hidden": false
+      },
+      {
+        "name": "Infiltrator",
+        "is_hidden": false
+      },
+      {
+        "name": "Telepathy",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Noibat.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Noivern",
+    "national_dex_number": 715,
+    "category": "Sound Wave Pokémon",
+    "types": [
+      "Flying",
+      "Dragon"
+    ],
+    "base_stats": {
+      "hp": 85,
+      "attack": 70,
+      "defense": 80,
+      "sp_atk": 97,
+      "sp_def": 80,
+      "speed": 123
+    },
+    "evolution_prev": "Noibat",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Frisk",
+        "is_hidden": false
+      },
+      {
+        "name": "Infiltrator",
+        "is_hidden": false
+      },
+      {
+        "name": "Telepathy",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Noivern.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Xerneas",
+    "national_dex_number": 716,
+    "category": "Life Pokémon",
+    "types": [
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 126,
+      "attack": 131,
+      "defense": 95,
+      "sp_atk": 131,
+      "sp_def": 98,
+      "speed": 99
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [],
+    "image_path": "data/images/Xerneas.png",
+    "form_image_paths": null,
+    "gender_ratio": null
+  },
+  {
+    "name": "Yveltal",
+    "national_dex_number": 717,
+    "category": "Destruction Pokémon",
+    "types": [
+      "Dark",
+      "Flying"
+    ],
+    "base_stats": {
+      "hp": 126,
+      "attack": 131,
+      "defense": 95,
+      "sp_atk": 131,
+      "sp_def": 98,
+      "speed": 99
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [],
+    "image_path": "data/images/Yveltal.png",
+    "form_image_paths": null,
+    "gender_ratio": null
+  },
+  {
+    "name": "Zygarde",
+    "national_dex_number": 718,
+    "category": "Order Pokémon",
+    "types": [
+      "Dragon",
+      "Ground"
+    ],
+    "base_stats": {
+      "hp": 108,
+      "attack": 100,
+      "defense": 121,
+      "sp_atk": 81,
+      "sp_def": 95,
+      "speed": 95
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Aura Break",
+        "is_hidden": false
+      },
+      {
+        "name": "Power Construct",
+        "is_hidden": false
+      }
+    ],
+    "image_path": "data/images/Zygarde_50_Forme.png",
+    "form_image_paths": {
+      "50_Forme": "data/images/Zygarde_50_Forme.png",
+      "10_Forme": "data/images/Zygarde_10_Forme.png",
+      "Complete_Forme": "data/images/Zygarde_Complete_Forme.png",
+      "Mega_Zygarde": "data/images/Zygarde_Mega_Zygarde.png",
+      "Other_forms_may_have_other_shapes": "data/images/Zygarde_Other_forms_may_have_other_shapes.png"
+    },
+    "gender_ratio": null
+  },
+  {
+    "name": "Diancie",
+    "national_dex_number": 719,
+    "category": "Jewel Pokémon",
+    "types": [
+      "Rock",
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 50,
+      "attack": 100,
+      "defense": 150,
+      "sp_atk": 100,
+      "sp_def": 150,
+      "speed": 50
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Clear Body",
+        "is_hidden": false
+      },
+      {
+        "name": "Magic Bounce",
+        "is_hidden": false
+      }
+    ],
+    "image_path": "data/images/Diancie_Diancie.png",
+    "form_image_paths": {
+      "Diancie": "data/images/Diancie_Diancie.png",
+      "Mega_Diancie": "data/images/Diancie_Mega_Diancie.png"
+    },
+    "gender_ratio": null
+  },
+  {
+    "name": "Hoopa",
+    "national_dex_number": 720,
+    "category": "Mischief PokémonDjinn Pokémon",
+    "types": [
+      "Psychic",
+      "Ghost"
+    ],
+    "base_stats": {
+      "hp": 80,
+      "attack": 110,
+      "defense": 60,
+      "sp_atk": 150,
+      "sp_def": 130,
+      "speed": 70
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [],
+    "image_path": "data/images/Hoopa.png",
+    "form_image_paths": null,
+    "gender_ratio": null
+  },
+  {
+    "name": "Volcanion",
+    "national_dex_number": 721,
+    "category": "Steam Pokémon",
+    "types": [
+      "Fire",
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 80,
+      "attack": 110,
+      "defense": 120,
+      "sp_atk": 130,
+      "sp_def": 90,
+      "speed": 70
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [],
+    "image_path": "data/images/Volcanion.png",
+    "form_image_paths": null,
+    "gender_ratio": null
+  },
+  {
+    "name": "Rowlet",
+    "national_dex_number": 722,
+    "category": "Grass Quill Pokémon",
+    "types": [
+      "Grass",
+      "Flying"
+    ],
+    "base_stats": {
+      "hp": 68,
+      "attack": 55,
+      "defense": 55,
+      "sp_atk": 50,
+      "sp_def": 50,
+      "speed": 42
+    },
+    "evolution_prev": null,
+    "evolution_next": "Dartrix",
+    "abilities": [
+      {
+        "name": "Overgrow",
+        "is_hidden": false
+      },
+      {
+        "name": "Long Reach",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Rowlet.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Dartrix",
+    "national_dex_number": 723,
+    "category": "Blade Quill Pokémon",
+    "types": [
+      "Grass",
+      "Flying"
+    ],
+    "base_stats": {
+      "hp": 78,
+      "attack": 75,
+      "defense": 75,
+      "sp_atk": 70,
+      "sp_def": 70,
+      "speed": 52
+    },
+    "evolution_prev": "Rowlet",
+    "evolution_next": "Decidueye",
+    "abilities": [
+      {
+        "name": "Overgrow",
+        "is_hidden": false
+      },
+      {
+        "name": "Long Reach",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Dartrix.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Decidueye",
+    "national_dex_number": 724,
+    "category": "Arrow Quill Pokémon",
+    "types": [
+      "Grass",
+      "Ghost"
+    ],
+    "base_stats": {
+      "hp": 78,
+      "attack": 107,
+      "defense": 75,
+      "sp_atk": 100,
+      "sp_def": 100,
+      "speed": 70
+    },
+    "evolution_prev": "Dartrix",
+    "evolution_next": "Decidueye (Hisuian)",
+    "abilities": [
+      {
+        "name": "Overgrow",
+        "is_hidden": false
+      },
+      {
+        "name": "Long Reach",
+        "is_hidden": true
+      },
+      {
+        "name": "Scrappy",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Decidueye.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Litten",
+    "national_dex_number": 725,
+    "category": "Fire Cat Pokémon",
+    "types": [
+      "Fire"
+    ],
+    "base_stats": {
+      "hp": 45,
+      "attack": 65,
+      "defense": 40,
+      "sp_atk": 60,
+      "sp_def": 40,
+      "speed": 70
+    },
+    "evolution_prev": null,
+    "evolution_next": "Torracat",
+    "abilities": [
+      {
+        "name": "Blaze",
+        "is_hidden": false
+      },
+      {
+        "name": "Intimidate",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Litten.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Torracat",
+    "national_dex_number": 726,
+    "category": "Fire Cat Pokémon",
+    "types": [
+      "Fire"
+    ],
+    "base_stats": {
+      "hp": 65,
+      "attack": 85,
+      "defense": 50,
+      "sp_atk": 80,
+      "sp_def": 50,
+      "speed": 90
+    },
+    "evolution_prev": "Litten",
+    "evolution_next": "Incineroar",
+    "abilities": [
+      {
+        "name": "Blaze",
+        "is_hidden": false
+      },
+      {
+        "name": "Intimidate",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Torracat.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Incineroar",
+    "national_dex_number": 727,
+    "category": "Heel Pokémon",
+    "types": [
+      "Fire",
+      "Dark"
+    ],
+    "base_stats": {
+      "hp": 95,
+      "attack": 115,
+      "defense": 90,
+      "sp_atk": 80,
+      "sp_def": 90,
+      "speed": 60
+    },
+    "evolution_prev": "Torracat",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Blaze",
+        "is_hidden": false
+      },
+      {
+        "name": "Intimidate",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Incineroar.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Popplio",
+    "national_dex_number": 728,
+    "category": "Sea Lion Pokémon",
+    "types": [
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 50,
+      "attack": 54,
+      "defense": 54,
+      "sp_atk": 66,
+      "sp_def": 56,
+      "speed": 40
+    },
+    "evolution_prev": null,
+    "evolution_next": "Brionne",
+    "abilities": [
+      {
+        "name": "Torrent",
+        "is_hidden": false
+      },
+      {
+        "name": "Liquid Voice",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Popplio.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Brionne",
+    "national_dex_number": 729,
+    "category": "Pop Star Pokémon",
+    "types": [
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 60,
+      "attack": 69,
+      "defense": 69,
+      "sp_atk": 91,
+      "sp_def": 81,
+      "speed": 50
+    },
+    "evolution_prev": "Popplio",
+    "evolution_next": "Primarina",
+    "abilities": [
+      {
+        "name": "Torrent",
+        "is_hidden": false
+      },
+      {
+        "name": "Liquid Voice",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Brionne.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Primarina",
+    "national_dex_number": 730,
+    "category": "Soloist Pokémon",
+    "types": [
+      "Water",
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 80,
+      "attack": 74,
+      "defense": 74,
+      "sp_atk": 126,
+      "sp_def": 116,
+      "speed": 60
+    },
+    "evolution_prev": "Brionne",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Torrent",
+        "is_hidden": false
+      },
+      {
+        "name": "Liquid Voice",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Primarina.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Pikipek",
+    "national_dex_number": 731,
+    "category": "Woodpecker Pokémon",
+    "types": [
+      "Normal",
+      "Flying"
+    ],
+    "base_stats": {
+      "hp": 35,
+      "attack": 75,
+      "defense": 30,
+      "sp_atk": 30,
+      "sp_def": 30,
+      "speed": 65
+    },
+    "evolution_prev": null,
+    "evolution_next": "Trumbeak",
+    "abilities": [
+      {
+        "name": "Keen Eye",
+        "is_hidden": false
+      },
+      {
+        "name": "Skill Link",
+        "is_hidden": false
+      },
+      {
+        "name": "Pickup",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Pikipek.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Trumbeak",
+    "national_dex_number": 732,
+    "category": "Bugle Beak Pokémon",
+    "types": [
+      "Normal",
+      "Flying"
+    ],
+    "base_stats": {
+      "hp": 55,
+      "attack": 85,
+      "defense": 50,
+      "sp_atk": 40,
+      "sp_def": 50,
+      "speed": 75
+    },
+    "evolution_prev": "Pikipek",
+    "evolution_next": "Toucannon",
+    "abilities": [
+      {
+        "name": "Keen Eye",
+        "is_hidden": false
+      },
+      {
+        "name": "Skill Link",
+        "is_hidden": false
+      },
+      {
+        "name": "Pickup",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Trumbeak.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Toucannon",
+    "national_dex_number": 733,
+    "category": "Cannon Pokémon",
+    "types": [
+      "Normal",
+      "Flying"
+    ],
+    "base_stats": {
+      "hp": 80,
+      "attack": 120,
+      "defense": 75,
+      "sp_atk": 75,
+      "sp_def": 75,
+      "speed": 60
+    },
+    "evolution_prev": "Trumbeak",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Keen Eye",
+        "is_hidden": false
+      },
+      {
+        "name": "Skill Link",
+        "is_hidden": false
+      },
+      {
+        "name": "Sheer Force",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Toucannon.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Yungoos",
+    "national_dex_number": 734,
+    "category": "Loitering Pokémon",
+    "types": [
+      "Normal"
+    ],
+    "base_stats": {
+      "hp": 48,
+      "attack": 70,
+      "defense": 30,
+      "sp_atk": 30,
+      "sp_def": 30,
+      "speed": 45
+    },
+    "evolution_prev": null,
+    "evolution_next": "Gumshoos",
+    "abilities": [
+      {
+        "name": "Stakeout",
+        "is_hidden": false
+      },
+      {
+        "name": "Strong Jaw",
+        "is_hidden": false
+      },
+      {
+        "name": "Adaptability",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Yungoos.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Gumshoos",
+    "national_dex_number": 735,
+    "category": "Stakeout Pokémon",
+    "types": [
+      "Normal"
+    ],
+    "base_stats": {
+      "hp": 88,
+      "attack": 110,
+      "defense": 60,
+      "sp_atk": 55,
+      "sp_def": 60,
+      "speed": 45
+    },
+    "evolution_prev": "Yungoos",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Stakeout",
+        "is_hidden": false
+      },
+      {
+        "name": "Strong Jaw",
+        "is_hidden": false
+      },
+      {
+        "name": "Adaptability",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Gumshoos.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Grubbin",
+    "national_dex_number": 736,
+    "category": "Larva Pokémon",
+    "types": [
+      "Bug"
+    ],
+    "base_stats": {
+      "hp": 47,
+      "attack": 62,
+      "defense": 45,
+      "sp_atk": 55,
+      "sp_def": 45,
+      "speed": 46
+    },
+    "evolution_prev": null,
+    "evolution_next": "Charjabug",
+    "abilities": [],
+    "image_path": "data/images/Grubbin.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Charjabug",
+    "national_dex_number": 737,
+    "category": "Battery Pokémon",
+    "types": [
+      "Bug",
+      "Electric"
+    ],
+    "base_stats": {
+      "hp": 57,
+      "attack": 82,
+      "defense": 95,
+      "sp_atk": 55,
+      "sp_def": 75,
+      "speed": 36
+    },
+    "evolution_prev": "Grubbin",
+    "evolution_next": "Vikavolt",
+    "abilities": [],
+    "image_path": "data/images/Charjabug.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Vikavolt",
+    "national_dex_number": 738,
+    "category": "Stag Beetle Pokémon",
+    "types": [
+      "Bug",
+      "Electric"
+    ],
+    "base_stats": {
+      "hp": 77,
+      "attack": 70,
+      "defense": 90,
+      "sp_atk": 145,
+      "sp_def": 75,
+      "speed": 43
+    },
+    "evolution_prev": "Charjabug",
+    "evolution_next": null,
+    "abilities": [],
+    "image_path": "data/images/Vikavolt.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Crabrawler",
+    "national_dex_number": 739,
+    "category": "Boxing Pokémon",
+    "types": [
+      "Fighting"
+    ],
+    "base_stats": {
+      "hp": 47,
+      "attack": 82,
+      "defense": 57,
+      "sp_atk": 42,
+      "sp_def": 47,
+      "speed": 63
+    },
+    "evolution_prev": null,
+    "evolution_next": "Crabominable",
+    "abilities": [
+      {
+        "name": "Hyper Cutter",
+        "is_hidden": false
+      },
+      {
+        "name": "Iron Fist",
+        "is_hidden": false
+      },
+      {
+        "name": "Anger Point",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Crabrawler.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Crabominable",
+    "national_dex_number": 740,
+    "category": "Woolly Crab Pokémon",
+    "types": [
+      "Fighting",
+      "Ice"
+    ],
+    "base_stats": {
+      "hp": 97,
+      "attack": 132,
+      "defense": 77,
+      "sp_atk": 62,
+      "sp_def": 67,
+      "speed": 43
+    },
+    "evolution_prev": "Crabrawler",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Hyper Cutter",
+        "is_hidden": false
+      },
+      {
+        "name": "Iron Fist",
+        "is_hidden": false
+      },
+      {
+        "name": "Anger Point",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Crabominable_Crabominable.png",
+    "form_image_paths": {
+      "Crabominable": "data/images/Crabominable_Crabominable.png",
+      "Mega_Crabominable": "data/images/Crabominable_Mega_Crabominable.png"
+    },
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Oricorio",
+    "national_dex_number": 741,
+    "category": "Dancing Pokémon",
+    "types": [
+      "Fire",
+      "Flying"
+    ],
+    "base_stats": {
+      "hp": 75,
+      "attack": 70,
+      "defense": 70,
+      "sp_atk": 98,
+      "sp_def": 70,
+      "speed": 93
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [],
+    "image_path": "data/images/Oricorio.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 25.0,
+      "female": 75.0
+    }
+  },
+  {
+    "name": "Cutiefly",
+    "national_dex_number": 742,
+    "category": "Bee Fly Pokémon",
+    "types": [
+      "Bug",
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 40,
+      "attack": 45,
+      "defense": 40,
+      "sp_atk": 55,
+      "sp_def": 40,
+      "speed": 84
+    },
+    "evolution_prev": null,
+    "evolution_next": "Ribombee",
+    "abilities": [
+      {
+        "name": "Honey Gather",
+        "is_hidden": false
+      },
+      {
+        "name": "Shield Dust",
+        "is_hidden": false
+      },
+      {
+        "name": "Sweet Veil",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Cutiefly.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Ribombee",
+    "national_dex_number": 743,
+    "category": "Bee Fly Pokémon",
+    "types": [
+      "Bug",
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 60,
+      "attack": 55,
+      "defense": 60,
+      "sp_atk": 95,
+      "sp_def": 70,
+      "speed": 124
+    },
+    "evolution_prev": "Cutiefly",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Honey Gather",
+        "is_hidden": false
+      },
+      {
+        "name": "Shield Dust",
+        "is_hidden": false
+      },
+      {
+        "name": "Sweet Veil",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Ribombee.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Rockruff",
+    "national_dex_number": 744,
+    "category": "Puppy Pokémon",
+    "types": [
+      "Rock"
+    ],
+    "base_stats": {
+      "hp": 45,
+      "attack": 65,
+      "defense": 40,
+      "sp_atk": 30,
+      "sp_def": 40,
+      "speed": 60
+    },
+    "evolution_prev": null,
+    "evolution_next": "Lycanroc (Midday)",
+    "abilities": [
+      {
+        "name": "Keen Eye",
+        "is_hidden": false
+      },
+      {
+        "name": "Vital Spirit",
+        "is_hidden": false
+      },
+      {
+        "name": "Steadfast",
+        "is_hidden": true
+      },
+      {
+        "name": "Own Tempo",
+        "is_hidden": false
+      }
+    ],
+    "image_path": "data/images/Rockruff.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Lycanroc",
+    "national_dex_number": 745,
+    "category": "Wolf Pokémon",
+    "types": [
+      "Rock"
+    ],
+    "base_stats": {
+      "hp": 75,
+      "attack": 115,
+      "defense": 65,
+      "sp_atk": 55,
+      "sp_def": 65,
+      "speed": 112
+    },
+    "evolution_prev": "Rockruff",
+    "evolution_next": "Lycanroc (Midnight)",
+    "abilities": [
+      {
+        "name": "Keen Eye",
+        "is_hidden": false
+      },
+      {
+        "name": "Sand Rush",
+        "is_hidden": false
+      },
+      {
+        "name": "Vital Spirit",
+        "is_hidden": false
+      },
+      {
+        "name": "Steadfast",
+        "is_hidden": true
+      },
+      {
+        "name": "No Guard",
+        "is_hidden": true
+      },
+      {
+        "name": "Tough Claws",
+        "is_hidden": false
+      }
+    ],
+    "image_path": "data/images/Lycanroc_Midday.png",
+    "form_image_paths": {
+      "Midday": "data/images/Lycanroc_Midday.png",
+      "Midnight": "data/images/Lycanroc_Midnight.png",
+      "Dusk": "data/images/Lycanroc_Dusk.png",
+      "Other_forms_may_have_other_shapes": "data/images/Lycanroc_Other_forms_may_have_other_shapes.png"
+    },
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Wishiwashi",
+    "national_dex_number": 746,
+    "category": "Small Fry Pokémon",
+    "types": [
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 45,
+      "attack": 20,
+      "defense": 20,
+      "sp_atk": 25,
+      "sp_def": 25,
+      "speed": 40
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [],
+    "image_path": "data/images/Wishiwashi_Solo.png",
+    "form_image_paths": {
+      "Solo": "data/images/Wishiwashi_Solo.png",
+      "School": "data/images/Wishiwashi_School.png",
+      "Other_forms_may_have_other_shapes": "data/images/Wishiwashi_Other_forms_may_have_other_shapes.png"
+    },
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Mareanie",
+    "national_dex_number": 747,
+    "category": "Brutal Star Pokémon",
+    "types": [
+      "Poison",
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 50,
+      "attack": 53,
+      "defense": 62,
+      "sp_atk": 43,
+      "sp_def": 52,
+      "speed": 45
+    },
+    "evolution_prev": null,
+    "evolution_next": "Toxapex",
+    "abilities": [
+      {
+        "name": "Merciless",
+        "is_hidden": false
+      },
+      {
+        "name": "Limber",
+        "is_hidden": false
+      },
+      {
+        "name": "Regenerator",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Mareanie.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Toxapex",
+    "national_dex_number": 748,
+    "category": "Brutal Star Pokémon",
+    "types": [
+      "Poison",
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 50,
+      "attack": 63,
+      "defense": 152,
+      "sp_atk": 53,
+      "sp_def": 142,
+      "speed": 35
+    },
+    "evolution_prev": "Mareanie",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Merciless",
+        "is_hidden": false
+      },
+      {
+        "name": "Limber",
+        "is_hidden": false
+      },
+      {
+        "name": "Regenerator",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Toxapex.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Mudbray",
+    "national_dex_number": 749,
+    "category": "Donkey Pokémon",
+    "types": [
+      "Ground"
+    ],
+    "base_stats": {
+      "hp": 70,
+      "attack": 100,
+      "defense": 70,
+      "sp_atk": 45,
+      "sp_def": 55,
+      "speed": 45
+    },
+    "evolution_prev": null,
+    "evolution_next": "Mudsdale",
+    "abilities": [
+      {
+        "name": "Own Tempo",
+        "is_hidden": false
+      },
+      {
+        "name": "Stamina",
+        "is_hidden": false
+      },
+      {
+        "name": "Inner Focus",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Mudbray.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Mudsdale",
+    "national_dex_number": 750,
+    "category": "Draft Horse Pokémon",
+    "types": [
+      "Ground"
+    ],
+    "base_stats": {
+      "hp": 100,
+      "attack": 125,
+      "defense": 100,
+      "sp_atk": 55,
+      "sp_def": 85,
+      "speed": 35
+    },
+    "evolution_prev": "Mudbray",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Own Tempo",
+        "is_hidden": false
+      },
+      {
+        "name": "Stamina",
+        "is_hidden": false
+      },
+      {
+        "name": "Inner Focus",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Mudsdale.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Dewpider",
+    "national_dex_number": 751,
+    "category": "Water Bubble Pokémon",
+    "types": [
+      "Water",
+      "Bug"
+    ],
+    "base_stats": {
+      "hp": 38,
+      "attack": 40,
+      "defense": 52,
+      "sp_atk": 40,
+      "sp_def": 72,
+      "speed": 27
+    },
+    "evolution_prev": null,
+    "evolution_next": "Araquanid",
+    "abilities": [
+      {
+        "name": "Water Bubble",
+        "is_hidden": false
+      },
+      {
+        "name": "Water Absorb",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Dewpider.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Araquanid",
+    "national_dex_number": 752,
+    "category": "Water Bubble Pokémon",
+    "types": [
+      "Water",
+      "Bug"
+    ],
+    "base_stats": {
+      "hp": 68,
+      "attack": 70,
+      "defense": 92,
+      "sp_atk": 50,
+      "sp_def": 132,
+      "speed": 42
+    },
+    "evolution_prev": "Dewpider",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Water Bubble",
+        "is_hidden": false
+      },
+      {
+        "name": "Water Absorb",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Araquanid.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Fomantis",
+    "national_dex_number": 753,
+    "category": "Sickle Grass Pokémon",
+    "types": [
+      "Grass"
+    ],
+    "base_stats": {
+      "hp": 40,
+      "attack": 55,
+      "defense": 35,
+      "sp_atk": 50,
+      "sp_def": 35,
+      "speed": 35
+    },
+    "evolution_prev": null,
+    "evolution_next": "Lurantis",
+    "abilities": [
+      {
+        "name": "Leaf Guard",
+        "is_hidden": false
+      },
+      {
+        "name": "Contrary",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Fomantis.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Lurantis",
+    "national_dex_number": 754,
+    "category": "Bloom Sickle Pokémon",
+    "types": [
+      "Grass"
+    ],
+    "base_stats": {
+      "hp": 70,
+      "attack": 105,
+      "defense": 90,
+      "sp_atk": 80,
+      "sp_def": 90,
+      "speed": 45
+    },
+    "evolution_prev": "Fomantis",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Leaf Guard",
+        "is_hidden": false
+      },
+      {
+        "name": "Contrary",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Lurantis.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Morelull",
+    "national_dex_number": 755,
+    "category": "Illuminating Pokémon",
+    "types": [
+      "Grass",
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 40,
+      "attack": 35,
+      "defense": 55,
+      "sp_atk": 65,
+      "sp_def": 75,
+      "speed": 15
+    },
+    "evolution_prev": null,
+    "evolution_next": "Shiinotic",
+    "abilities": [
+      {
+        "name": "Illuminate",
+        "is_hidden": false
+      },
+      {
+        "name": "Effect Spore",
+        "is_hidden": false
+      },
+      {
+        "name": "Rain Dish",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Morelull.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Shiinotic",
+    "national_dex_number": 756,
+    "category": "Illuminating Pokémon",
+    "types": [
+      "Grass",
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 60,
+      "attack": 45,
+      "defense": 80,
+      "sp_atk": 90,
+      "sp_def": 100,
+      "speed": 30
+    },
+    "evolution_prev": "Morelull",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Illuminate",
+        "is_hidden": false
+      },
+      {
+        "name": "Effect Spore",
+        "is_hidden": false
+      },
+      {
+        "name": "Rain Dish",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Shiinotic.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Salandit",
+    "national_dex_number": 757,
+    "category": "Toxic Lizard Pokémon",
+    "types": [
+      "Poison",
+      "Fire"
+    ],
+    "base_stats": {
+      "hp": 48,
+      "attack": 44,
+      "defense": 40,
+      "sp_atk": 71,
+      "sp_def": 40,
+      "speed": 77
+    },
+    "evolution_prev": null,
+    "evolution_next": "Salazzle",
+    "abilities": [
+      {
+        "name": "Corrosion",
+        "is_hidden": false
+      },
+      {
+        "name": "Oblivious",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Salandit.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 87.5,
+      "female": 12.5
+    }
+  },
+  {
+    "name": "Salazzle",
+    "national_dex_number": 758,
+    "category": "Toxic Lizard Pokémon",
+    "types": [
+      "Poison",
+      "Fire"
+    ],
+    "base_stats": {
+      "hp": 68,
+      "attack": 64,
+      "defense": 60,
+      "sp_atk": 111,
+      "sp_def": 60,
+      "speed": 117
+    },
+    "evolution_prev": "Salandit",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Corrosion",
+        "is_hidden": false
+      },
+      {
+        "name": "Oblivious",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Salazzle.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": null,
+      "female": 100.0
+    }
+  },
+  {
+    "name": "Stufful",
+    "national_dex_number": 759,
+    "category": "Flailing Pokémon",
+    "types": [
+      "Normal",
+      "Fighting"
+    ],
+    "base_stats": {
+      "hp": 70,
+      "attack": 75,
+      "defense": 50,
+      "sp_atk": 45,
+      "sp_def": 50,
+      "speed": 50
+    },
+    "evolution_prev": null,
+    "evolution_next": "Bewear",
+    "abilities": [
+      {
+        "name": "Fluffy",
+        "is_hidden": false
+      },
+      {
+        "name": "Klutz",
+        "is_hidden": false
+      },
+      {
+        "name": "Cute Charm",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Stufful.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Bewear",
+    "national_dex_number": 760,
+    "category": "Strong Arm Pokémon",
+    "types": [
+      "Normal",
+      "Fighting"
+    ],
+    "base_stats": {
+      "hp": 120,
+      "attack": 125,
+      "defense": 80,
+      "sp_atk": 55,
+      "sp_def": 60,
+      "speed": 60
+    },
+    "evolution_prev": "Stufful",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Fluffy",
+        "is_hidden": false
+      },
+      {
+        "name": "Klutz",
+        "is_hidden": false
+      },
+      {
+        "name": "Unnerve",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Bewear.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Bounsweet",
+    "national_dex_number": 761,
+    "category": "Fruit Pokémon",
+    "types": [
+      "Grass"
+    ],
+    "base_stats": {
+      "hp": 42,
+      "attack": 30,
+      "defense": 38,
+      "sp_atk": 30,
+      "sp_def": 38,
+      "speed": 32
+    },
+    "evolution_prev": null,
+    "evolution_next": "Steenee",
+    "abilities": [
+      {
+        "name": "Leaf Guard",
+        "is_hidden": false
+      },
+      {
+        "name": "Oblivious",
+        "is_hidden": false
+      },
+      {
+        "name": "Sweet Veil",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Bounsweet.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": null,
+      "female": 100.0
+    }
+  },
+  {
+    "name": "Steenee",
+    "national_dex_number": 762,
+    "category": "Fruit Pokémon",
+    "types": [
+      "Grass"
+    ],
+    "base_stats": {
+      "hp": 52,
+      "attack": 40,
+      "defense": 48,
+      "sp_atk": 40,
+      "sp_def": 48,
+      "speed": 62
+    },
+    "evolution_prev": "Bounsweet",
+    "evolution_next": "Tsareena",
+    "abilities": [
+      {
+        "name": "Leaf Guard",
+        "is_hidden": false
+      },
+      {
+        "name": "Oblivious",
+        "is_hidden": false
+      },
+      {
+        "name": "Sweet Veil",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Steenee.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": null,
+      "female": 100.0
+    }
+  },
+  {
+    "name": "Tsareena",
+    "national_dex_number": 763,
+    "category": "Fruit Pokémon",
+    "types": [
+      "Grass"
+    ],
+    "base_stats": {
+      "hp": 72,
+      "attack": 120,
+      "defense": 98,
+      "sp_atk": 50,
+      "sp_def": 98,
+      "speed": 72
+    },
+    "evolution_prev": "Steenee",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Leaf Guard",
+        "is_hidden": false
+      },
+      {
+        "name": "Queenly Majesty",
+        "is_hidden": false
+      },
+      {
+        "name": "Sweet Veil",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Tsareena.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": null,
+      "female": 100.0
+    }
+  },
+  {
+    "name": "Comfey",
+    "national_dex_number": 764,
+    "category": "Posy Picker Pokémon",
+    "types": [
+      "Fairy"
+    ],
+    "base_stats": {
+      "hp": 51,
+      "attack": 52,
+      "defense": 90,
+      "sp_atk": 82,
+      "sp_def": 110,
+      "speed": 100
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Flower Veil",
+        "is_hidden": false
+      },
+      {
+        "name": "Triage",
+        "is_hidden": false
+      },
+      {
+        "name": "Natural Cure",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Comfey.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 25.0,
+      "female": 75.0
+    }
+  },
+  {
+    "name": "Oranguru",
+    "national_dex_number": 765,
+    "category": "Sage Pokémon",
+    "types": [
+      "Normal",
+      "Psychic"
+    ],
+    "base_stats": {
+      "hp": 90,
+      "attack": 60,
+      "defense": 80,
+      "sp_atk": 90,
+      "sp_def": 110,
+      "speed": 60
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Inner Focus",
+        "is_hidden": false
+      },
+      {
+        "name": "Telepathy",
+        "is_hidden": false
+      },
+      {
+        "name": "Symbiosis",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Oranguru.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Passimian",
+    "national_dex_number": 766,
+    "category": "Teamwork Pokémon",
+    "types": [
+      "Fighting"
+    ],
+    "base_stats": {
+      "hp": 100,
+      "attack": 120,
+      "defense": 90,
+      "sp_atk": 40,
+      "sp_def": 60,
+      "speed": 80
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Receiver",
+        "is_hidden": false
+      },
+      {
+        "name": "Defiant",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Passimian.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Wimpod",
+    "national_dex_number": 767,
+    "category": "Turn Tail Pokémon",
+    "types": [
+      "Bug",
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 25,
+      "attack": 35,
+      "defense": 40,
+      "sp_atk": 20,
+      "sp_def": 30,
+      "speed": 80
+    },
+    "evolution_prev": null,
+    "evolution_next": "Golisopod",
+    "abilities": [],
+    "image_path": "data/images/Wimpod.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Golisopod",
+    "national_dex_number": 768,
+    "category": "Hard Scale Pokémon",
+    "types": [
+      "Bug",
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 75,
+      "attack": 125,
+      "defense": 140,
+      "sp_atk": 60,
+      "sp_def": 90,
+      "speed": 40
+    },
+    "evolution_prev": "Wimpod",
+    "evolution_next": null,
+    "abilities": [],
+    "image_path": "data/images/Golisopod_Golisopod.png",
+    "form_image_paths": {
+      "Golisopod": "data/images/Golisopod_Golisopod.png",
+      "Mega_Golisopod": "data/images/Golisopod_Mega_Golisopod.png"
+    },
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Sandygast",
+    "national_dex_number": 769,
+    "category": "Sand Heap Pokémon",
+    "types": [
+      "Ghost",
+      "Ground"
+    ],
+    "base_stats": {
+      "hp": 55,
+      "attack": 55,
+      "defense": 80,
+      "sp_atk": 70,
+      "sp_def": 45,
+      "speed": 15
+    },
+    "evolution_prev": null,
+    "evolution_next": "Palossand",
+    "abilities": [
+      {
+        "name": "Water Compaction",
+        "is_hidden": false
+      },
+      {
+        "name": "Sand Veil",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Sandygast.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Palossand",
+    "national_dex_number": 770,
+    "category": "Sand Castle Pokémon",
+    "types": [
+      "Ghost",
+      "Ground"
+    ],
+    "base_stats": {
+      "hp": 85,
+      "attack": 75,
+      "defense": 110,
+      "sp_atk": 100,
+      "sp_def": 75,
+      "speed": 35
+    },
+    "evolution_prev": "Sandygast",
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Water Compaction",
+        "is_hidden": false
+      },
+      {
+        "name": "Sand Veil",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Palossand.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Pyukumuku",
+    "national_dex_number": 771,
+    "category": "Sea Cucumber Pokémon",
+    "types": [
+      "Water"
+    ],
+    "base_stats": {
+      "hp": 55,
+      "attack": 60,
+      "defense": 130,
+      "sp_atk": 30,
+      "sp_def": 130,
+      "speed": 5
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [
+      {
+        "name": "Innards Out",
+        "is_hidden": false
+      },
+      {
+        "name": "Unaware",
+        "is_hidden": true
+      }
+    ],
+    "image_path": "data/images/Pyukumuku.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
+  },
+  {
+    "name": "Type: Null",
+    "national_dex_number": 772,
+    "category": "Synthetic Pokémon",
+    "types": [
+      "Normal"
+    ],
+    "base_stats": {
+      "hp": 95,
+      "attack": 95,
+      "defense": 95,
+      "sp_atk": 95,
+      "sp_def": 95,
+      "speed": 59
+    },
+    "evolution_prev": null,
+    "evolution_next": "Silvally",
+    "abilities": [
+      {
+        "name": "Let's Go, Pikachu! and Let's Go, Eevee!",
+        "is_hidden": false
+      },
+      {
+        "name": "Sun",
+        "is_hidden": false
+      },
+      {
+        "name": "Moon",
+        "is_hidden": false
+      },
+      {
+        "name": "Ultra Sun",
+        "is_hidden": false
+      },
+      {
+        "name": "Ultra Moon",
+        "is_hidden": false
+      },
+      {
+        "name": "Due to the danger that this synthetic Pokémon may go on a rampage",
+        "is_hidden": false
+      },
+      {
+        "name": "it wears a control mask to restrain its power.",
+        "is_hidden": false
+      },
+      {
+        "name": "A Pokémon weapon developed for a specific mission",
+        "is_hidden": false
+      },
+      {
+        "name": "it went berserk during an experiment",
+        "is_hidden": false
+      },
+      {
+        "name": "so it was cryogenically frozen.",
+        "is_hidden": false
+      },
+      {
+        "name": "There's danger of its going on a rampage",
+        "is_hidden": false
+      },
+      {
+        "name": "so its true power is sealed away beneath its control mask.",
+        "is_hidden": false
+      }
+    ],
+    "image_path": "data/images/Type_Null.png",
+    "form_image_paths": null,
+    "gender_ratio": null
+  },
+  {
+    "name": "Silvally",
+    "national_dex_number": 773,
+    "category": "Synthetic Pokémon",
+    "types": [
+      "Normal"
+    ],
+    "base_stats": {
+      "hp": 95,
+      "attack": 95,
+      "defense": 95,
+      "sp_atk": 95,
+      "sp_def": 95,
+      "speed": 95
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [],
+    "image_path": "data/images/Silvally.png",
+    "form_image_paths": null,
+    "gender_ratio": null
+  },
+  {
+    "name": "Minior",
+    "national_dex_number": 774,
+    "category": "Meteor Pokémon",
+    "types": [
+      "Rock",
+      "Flying"
+    ],
+    "base_stats": {
+      "hp": 60,
+      "attack": 60,
+      "defense": 100,
+      "sp_atk": 60,
+      "sp_def": 100,
+      "speed": 60
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [],
+    "image_path": "data/images/Minior.png",
+    "form_image_paths": null,
+    "gender_ratio": null
+  },
+  {
+    "name": "Komala",
+    "national_dex_number": 775,
+    "category": "Drowsing Pokémon",
+    "types": [
+      "Normal"
+    ],
+    "base_stats": {
+      "hp": 65,
+      "attack": 115,
+      "defense": 65,
+      "sp_atk": 75,
+      "sp_def": 95,
+      "speed": 65
+    },
+    "evolution_prev": null,
+    "evolution_next": null,
+    "abilities": [],
+    "image_path": "data/images/Komala.png",
+    "form_image_paths": null,
+    "gender_ratio": {
+      "male": 50.0,
+      "female": 50.0
+    }
   }
 ]
